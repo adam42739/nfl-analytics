@@ -1,0 +1,5 @@
+**/__pycache__
+/test*.*
+env
+.pytest_cache
+dstore
