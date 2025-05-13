@@ -241,7 +241,7 @@ def test_get_ngs():
             "rush_yards",
             "expected_rush_yards",
         ],
-        file_path="ngs-year=2023-ngs_type=rushing.parquet",
+        file_path="ngs-ngs_type=rushing-year=2023.parquet",
         year=2023,
         ngs_type="rushing",
     )
@@ -256,7 +256,7 @@ def test_get_ngs():
             "avg_air_yards_to_sticks",
             "attempts",
         ],
-        file_path="ngs-year=2023-ngs_type=passing.parquet",
+        file_path="ngs-ngs_type=passing-year=2023.parquet",
         year=2023,
         ngs_type="passing",
     )
@@ -274,7 +274,7 @@ def test_get_ngs():
             "avg_expected_yac",
             "avg_yac_above_expectation",
         ],
-        file_path="ngs-year=2023-ngs_type=receiving.parquet",
+        file_path="ngs-ngs_type=receiving-year=2023.parquet",
         year=2023,
         ngs_type="receiving",
     )
