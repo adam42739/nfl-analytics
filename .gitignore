@@ -3,3 +3,4 @@
 env
 .pytest_cache
 dstore
+nfl_analytics/_datastore_path.txt
