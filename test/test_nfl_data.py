@@ -28,21 +28,22 @@ def run_data_fetch_test(
         # Get the current datastore path
         current_path = datastore._get_datastore_path()
 
-        # Set the datastore path to a temporary directory
-        datastore.set_datastore_path(tempdir)
+        try:
+            # Set the datastore path to a temporary directory
+            datastore.set_datastore_path(tempdir)
 
-        # Fetch the data
-        df = data_fetcher(**fetcher_args)
+            # Fetch the data
+            df = data_fetcher(**fetcher_args)
 
-        # Check that the DataFrame has the expected columns
-        for col in expected_columns:
-            assert col in df.columns
+            # Check that the DataFrame has the expected columns
+            for col in expected_columns:
+                assert col in df.columns
 
-        # Check that the file exists in the datastore
-        assert datastore.file_exists("nfl_data/", file_path)
-
-        # Reset the datastore path to the original path
-        datastore.set_datastore_path(current_path)
+            # Check that the file exists in the datastore
+            assert datastore.file_exists("nfl_data/", file_path)
+        finally:
+            # Reset the datastore path to the original path
+            datastore.set_datastore_path(current_path)
 
 
 def test_get_players():
