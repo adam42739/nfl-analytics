@@ -1,0 +1,75 @@
+\documentclass{report}
+
+\usepackage[a4paper, margin=0.5in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xurl}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    \includegraphics[width=8cm]{images/nfl_logo.png}\par\vspace{1cm}
+
+    \vspace{0.5cm}
+    {\huge\bfseries A Summer Project in NFL Analytics \par}
+    \vspace{2cm}
+
+    {\Large Adam Lynch \par}
+    \vspace{1cm}
+
+    {\large May 13, 2025 - May 13, 2025 \par}
+
+    \vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\chapter{Rating Systems}
+
+\section{Simple Rating System (SRS)}
+
+The Simple Rating System (SRS) is a straightforward method used to evaluate teams based on their average point differential adjusted for the strength of their opponents. 
+Though its exact origins are unclear in our research, Doug Drinen of Sports Reference discussed the SRS and its calculation in a series of blog posts in 2006 \cite{drinen06-1,drinen06-2}.
+Drinen provides an excellent overview of the SRS which we recommend reading.
+We present Drinen's \textit{transitivity} formulation of the SRS here, which will be useful as a base to build upon later.
+
+The argument of transitivity is that if team A is better than team B, and team B is better than team C, then team A is better than team C.
+In fact, in a perfect world, team A beats team B by $X$ points, team B beats team C by $Y$ points, and team A beats team C by $X+Y$ points.
+Following this argument, if we define the SRS as a teams point differential in a game against and arbitrarily average opponent, we can set up the following system of equations:
+
+\begin{equation}
+    \begin{aligned}
+        P_{1,A} - P_{1,B} &= SRS_A - SRS_B \\
+        P_{2,B} - P_{2,C} &= SRS_B - SRS_C \\
+        P_{3,A} - P_{3,C} &= SRS_A - SRS_C
+    \end{aligned}
+\end{equation}
+
+Here we use the notation $P_{i,j}$ to represent the points scored by team $j$ in game $i$.
+Unfortunately, this system might not be solvable -- especially so if two teams play multiple games against each other.
+The more appropriate system instead included an error term $\epsilon$, where the SRS ratings are such that the sum of square of all $\epsilon$ is minimized (i.e. $\epsilon_1^2+\epsilon_2^2+\epsilon_3^2$).
+
+\begin{equation}
+    \begin{aligned}
+        P_{1,A} - P_{1,B} &= SRS_A - SRS_B + \epsilon_1 \\
+        P_{2,B} - P_{2,C} &= SRS_B - SRS_C + \epsilon_2 \\
+        P_{3,A} - P_{3,C} &= SRS_A - SRS_C + \epsilon_3
+    \end{aligned}
+\end{equation}
+
+
+
+\section{Predictive SRS (PSRS)}
+
+\section{Predictive SRS with Exogenous Regressors (PSRSX)}
+
+\begin{thebibliography}{9}
+    \bibitem{drinen06-1} Drinen D. (2006), ``A very simple ranking system'', \textit{Pro-Football-Reference}, \url{https://web.archive.org/web/20161031224357/http://www.pro-football-reference.com/blog/index4837.html}
+    \bibitem{drinen06-2} Drinen D. (2006), ``Another ranking system'', \textit{Pro-Football-Reference}, \url{https://web.archive.org/web/20161102124021/http://www.pro-football-reference.com/blog/indexba52.html?p=39}
+\end{thebibliography}
+
+\end{document}
