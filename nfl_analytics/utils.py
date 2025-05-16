@@ -19,8 +19,8 @@ class NflWeek:
 
 def filter_data(
     df: pd.DataFrame,
-    after_week: NflWeek = NflWeek(1900, 1),
-    before_week: NflWeek = NflWeek(2100, 1),
+    start_week: NflWeek = NflWeek(1900, 1),
+    end_week: NflWeek = NflWeek(2100, 1),
     season_col: str = "season",
     week_col: str = "week",
 ) -> pd.DataFrame:
@@ -31,10 +31,10 @@ def filter_data(
     ----------
         df : pd.DataFrame
             The DataFrame to filter.
-        after_week : NflWeek
-            The start week to filter from. Leave blank for no lower bound.
-        before_week : NflWeek
-            The end week to filter to. Leave blank for no upper bound.
+        start_week : NflWeek
+            The start week to filter from (inclusive). Leave blank for no lower bound.
+        end_week : NflWeek
+            The end week to filter to (inclusive). Leave blank for no upper bound.
         season_col : str
             The name of the column containing the season information. Default is "season".
         week_col : str
@@ -46,8 +46,8 @@ def filter_data(
             The filtered DataFrame. Beware returned DataFrame is a slice.
     """
     return df[
-        (df[season_col] >= after_week.season)
-        & (df[season_col] <= before_week.season)
-        & (df[week_col] >= after_week.week)
-        & (df[week_col] <= before_week.week)
+        (df[season_col] >= start_week.season)
+        & (df[season_col] <= end_week.season)
+        & (df[week_col] >= start_week.week)
+        & (df[week_col] <= end_week.week)
     ]
