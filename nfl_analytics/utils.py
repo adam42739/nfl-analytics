@@ -45,9 +45,16 @@ def filter_data(
         pd.DataFrame
             The filtered DataFrame. Beware returned DataFrame is a slice.
     """
-    return df[
-        (df[season_col] >= start_week.season)
-        & (df[season_col] <= end_week.season)
-        & (df[week_col] >= start_week.week)
-        & (df[week_col] <= end_week.week)
-    ]
+    # Filter the DataFrame by the given season
+    start_mask = df[season_col] >= start_week.season
+    end_mask = df[season_col] <= end_week.season
+    df = df[start_mask & end_mask]
+
+    # Filter the DataFrame by the given week
+    lower_edge_mask = df[season_col] == start_week.season
+    start_mask = ~lower_edge_mask | (df[week_col] >= start_week.week)
+    upper_edge_mask = df[season_col] == end_week.season
+    end_mask = ~upper_edge_mask | (df[week_col] <= end_week.week)
+    df = df[start_mask & end_mask]
+
+    return df
