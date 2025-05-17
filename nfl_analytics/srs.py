@@ -55,10 +55,16 @@ def get_srs(week: NflWeek) -> pd.DataFrame:
     # Run least squares to get the SRS
     x, residuals, rank, s = np.linalg.lstsq(teams_matrix, score_diff, rcond=None)
 
+    # Calculate the MOV and SoS for each team
+    mov = utils.get_mov(week)
+    sos = x - mov["MOV"].to_numpy()
+
     # Create the SRS DataFrame
     srs_df = pd.DataFrame(
         {
             "Team": teams,
+            "MOV": mov["MOV"],
+            "SoS": sos,
             "SRS": x,
         }
     )
@@ -177,14 +183,21 @@ def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     # Run least squares to get the SRS breakdown
     x, residuals, rank, s = np.linalg.lstsq(teams_matrix, score_diff, rcond=None)
 
+    # Calculate the MOV and SoS for each team
+    mov = utils.get_mov(week)
+    srs = x[:32] + x[32:64] + x[64:]
+    sos = srs - mov["MOV"].to_numpy()
+
     # Create the SRS DataFrame
     srs_df = pd.DataFrame(
         {
             "Team": teams,
+            "MOV": mov["MOV"],
+            "SoS": sos,
+            "SRS": srs,
             "SRS_O": x[:32],
             "SRS_D": x[32:64],
             "SRS_ST": x[64:],
-            "SRS": x[:32] + x[32:64] + x[64:],
         }
     )
 
