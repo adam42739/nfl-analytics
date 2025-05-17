@@ -40,7 +40,13 @@ def get_srs(season: int, week: int) -> pd.DataFrame:
     #   - Teams as columns alphabetically from A to Z
     #   - Games as rows (same index as score_diff)
     #   - 1 for home team, -1 for away team
-    teams = pd.Series(sorted(schedules["home_team"].unique()))
+    teams = pd.Series(
+        sorted(
+            np.concatenate(
+                (schedules["home_team"].unique(), schedules["away_team"].unique())
+            )
+        )
+    )
     teams_df = pd.DataFrame(
         {
             team: 1 * (team == schedules["home_team"])
