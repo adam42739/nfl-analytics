@@ -78,7 +78,7 @@ def filter_data(
 # ------------------------------ #
 
 
-def pbp_get_point_breakdown(season: int) -> pd.DataFrame:
+def get_point_breakdown(season: int) -> pd.DataFrame:
     """
     Get the point breakdown (offensive vs. special teams points) for each game.
     Scoring breakdown is sourced from the play-by-play data.

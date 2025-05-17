@@ -91,7 +91,7 @@ def get_srs_breakdown(season: int, week: int) -> pd.DataFrame:
     game_ids = schedules["game_id"].unique()
 
     # Get the point breakdown data for each game up to the specified week
-    point_breakdown = utils.pbp_get_point_breakdown(season)
+    point_breakdown = utils.get_point_breakdown(season)
     point_breakdown = point_breakdown[point_breakdown.index.isin(game_ids)]
 
     # Calculate the home field advantages
