@@ -78,9 +78,9 @@ def filter_data(
 # ------------------------------ #
 
 
-def pbp_get_score_breakdown(season: int) -> pd.DataFrame:
+def pbp_get_point_breakdown(season: int) -> pd.DataFrame:
     """
-    Get the score breakdown (offensive vs. special teams points) for each game.
+    Get the point breakdown (offensive vs. special teams points) for each game.
     Scoring breakdown is sourced from the play-by-play data.
 
     Parameters
@@ -91,7 +91,7 @@ def pbp_get_score_breakdown(season: int) -> pd.DataFrame:
     Returns
     -------
         pd.DataFrame
-            The score breakdown for each play.
+            The point breakdown for each play.
     """
     # Get the play-by-play data for the given season
     pbp_df = nfl_data.get_pbp(season)
@@ -174,7 +174,7 @@ def pbp_get_score_breakdown(season: int) -> pd.DataFrame:
     # =======================================================================
 
     # Get the home and way team scoring breakdown for each game
-    score_breakdown = pbp_df.groupby("game_id").agg(
+    point_breakdown = pbp_df.groupby("game_id").agg(
         {
             "home_team": "first",
             "away_team": "first",
@@ -187,4 +187,4 @@ def pbp_get_score_breakdown(season: int) -> pd.DataFrame:
         }
     )
 
-    return score_breakdown
+    return point_breakdown
