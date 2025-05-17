@@ -5,7 +5,7 @@ from nfl_analytics.utils import NflWeek
 import numpy as np
 
 
-def get_srs(season: int, week: int) -> pd.DataFrame:
+def get_srs(week: NflWeek) -> pd.DataFrame:
     """
     Get the Simple Rating System (SRS) for a given season and week.
 
@@ -24,8 +24,8 @@ def get_srs(season: int, week: int) -> pd.DataFrame:
     schedules = nfl_data.get_schedules()
     schedules = utils.filter_data(
         schedules,
-        start_week=NflWeek(season, 1),
-        end_week=NflWeek(season, week),
+        start_week=NflWeek(week.season, 1),
+        end_week=week,
     )
 
     # Calculate the home field advantage
@@ -66,7 +66,7 @@ def get_srs(season: int, week: int) -> pd.DataFrame:
     return srs_df
 
 
-def get_srs_breakdown(season: int, week: int) -> pd.DataFrame:
+def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     """
     Get the Simple Rating System (SRS) breakdown for a given season and week.
 
@@ -85,13 +85,13 @@ def get_srs_breakdown(season: int, week: int) -> pd.DataFrame:
     schedules = nfl_data.get_schedules()
     schedules = utils.filter_data(
         schedules,
-        start_week=NflWeek(season, 1),
-        end_week=NflWeek(season, week),
+        start_week=NflWeek(week.season, 1),
+        end_week=week,
     )
     game_ids = schedules["game_id"].unique()
 
     # Get the point breakdown data for each game up to the specified week
-    point_breakdown = utils.get_point_breakdown(season)
+    point_breakdown = utils.get_point_breakdown(week.season)
     point_breakdown = point_breakdown[point_breakdown.index.isin(game_ids)]
 
     # Calculate the home field advantages
