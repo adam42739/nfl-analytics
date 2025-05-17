@@ -188,3 +188,49 @@ def get_point_breakdown(season: int) -> pd.DataFrame:
     )
 
     return point_breakdown
+
+
+# --------------------------- #
+# Schedules Utility Functions #
+# --------------------------- #
+
+
+def get_mov(week: NflWeek) -> pd.DataFrame:
+    """
+    Get the margin of victory (MOV) for each game in a given week.
+
+    Parameters
+    ----------
+        week : NflWeek
+            The current week of the NFL season.
+
+    Returns
+    -------
+        pd.DataFrame
+            The MOV by team.
+    """
+    # Get the schedule data for the given week
+    schedules = nfl_data.get_schedules()
+    schedules = filter_data(
+        schedules,
+        start_week=NflWeek(week.season, 1),
+        end_week=week,
+    )
+
+    # Get each team's total points scored
+    points_home = schedules.groupby("home_team")["home_score"].agg(["sum", "count"])
+    points_away = schedules.groupby("away_team")["away_score"].agg(["sum", "count"])
+    points_scored = points_home.add(points_away, fill_value=0)
+
+    # Get each team's total points allowed
+    points_home = schedules.groupby("home_team")["away_score"].agg(["sum", "count"])
+    points_away = schedules.groupby("away_team")["home_score"].agg(["sum", "count"])
+    points_allowed = points_home.add(points_away, fill_value=0)
+
+    # Calculate the MOV
+    mov = (points_scored["sum"] - points_allowed["sum"]) / points_scored["count"]
+    mov = mov.reset_index()
+    mov = mov.rename({"home_team": "Team", 0: "MOV"}, axis=1)
+    mov = mov.sort_values(by="Team")
+
+    return mov
