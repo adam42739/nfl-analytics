@@ -33,35 +33,109 @@
 \section{Simple Rating System (SRS)}
 
 The Simple Rating System (SRS) is a straightforward method used to evaluate teams based on their average point differential adjusted for the strength of their opponents. 
-Though its exact origins are unclear in our research, Doug Drinen of Sports Reference discussed the SRS and its calculation in a series of blog posts in 2006 \cite{drinen06-1,drinen06-2}.
+Though its exact origins are unclear in my research, Doug Drinen of Sports Reference discussed the SRS and its calculation in a series of blog posts in 2006 \cite{drinen06-1,drinen06-2}.
 Drinen provides an excellent overview of the SRS which we recommend reading.
 We present Drinen's \textit{transitivity} formulation of the SRS here, which will be useful as a base to build upon later.
 
 The argument of transitivity is that if team A is better than team B, and team B is better than team C, then team A is better than team C.
 In fact, in a perfect world, team A beats team B by $X$ points, team B beats team C by $Y$ points, and team A beats team C by $X+Y$ points.
-Following this argument, if we define the SRS as a teams point differential in a game against and arbitrarily average opponent, we can set up the following system of equations:
+Following this argument, if we define the SRS as \textit{a team's point differential in a game against an average opponent}, we can set up the following system of equations:
 
-\begin{equation}
+\begin{equation}\label{eq:sts_over_sys}
     \begin{aligned}
-        P_{1,A} - P_{1,B} &= SRS_A - SRS_B \\
-        P_{2,B} - P_{2,C} &= SRS_B - SRS_C \\
-        P_{3,A} - P_{3,C} &= SRS_A - SRS_C
+        (P_{1,A} - HFA) - P_{1,B} &= SRS_A - SRS_B \\
+        (P_{2,B} - HFA) - P_{2,C} &= SRS_B - SRS_C \\
+        (P_{3,C} - HFA) - P_{3,A} &= SRS_C - SRS_A
     \end{aligned}
 \end{equation}
 
 Here we use the notation $P_{i,j}$ to represent the points scored by team $j$ in game $i$.
-Unfortunately, this system might not be solvable -- especially so if two teams play multiple games against each other.
-The more appropriate system instead included an error term $\epsilon$, where the SRS ratings are such that the sum of square of all $\epsilon$ is minimized (i.e. $\epsilon_1^2+\epsilon_2^2+\epsilon_3^2$).
+In addition, $HFA$ represents the home field advantage, which we subtract from the home team's points scored in each game
+(We calculate $HFA$ as the average home team points minus the average away team points for all completed games in the season.
+In the case of a game played at a neutral site like The Super Bowl, we would simply leave out the $HFA$ term).
+Unfortunately, this system might not be solvable -- especially if two teams play each other more than once.
+The more appropriate system instead includes an error term $\epsilon$, where the SRS ratings are such that the sum of squares of the error terms is minimized (i.e. minimize $\epsilon_1^2+\epsilon_2^2+\epsilon_3^2$)\footnote{
+    This is the same as using least squares on the overdetermined/unsolvable system in \textbf{Equation \ref{eq:sts_over_sys}}.
+}.
 
-\begin{equation}
+\begin{equation}\label{eq:sts_over_sys_ep}
     \begin{aligned}
-        P_{1,A} - P_{1,B} &= SRS_A - SRS_B + \epsilon_1 \\
-        P_{2,B} - P_{2,C} &= SRS_B - SRS_C + \epsilon_2 \\
-        P_{3,A} - P_{3,C} &= SRS_A - SRS_C + \epsilon_3
+        (P_{1,A} - HFA) - P_{1,B} &= SRS_A - SRS_B + \epsilon_1 \\
+        (P_{2,B} - HFA) - P_{2,C} &= SRS_B - SRS_C + \epsilon_2 \\
+        (P_{3,C} - HFA) - P_{3,A} &= SRS_C - SRS_A + \epsilon_3
     \end{aligned}
 \end{equation}
 
+\subsection{SRS Breakdown}
 
+We can break down a team's SRS into three components: offensive ($O$), defensive ($D$), and special teams ($ST$).
+
+\begin{equation}
+    SRS = SRS_O + SRS_D + SRS_{ST}
+\end{equation}
+
+To do this, we must first break down the points scored by a team into offensive, defensive, and special teams points.
+The distribution of team points across the three components should be relatively straightforward.
+Offensive points include all points scored by the offensive excluding extra points and field goals.
+Defensive points include all interception/fumble touchdowns and safeties.
+Special teams points include all extra points, field goals, and kick/punt return touchdowns.
+Once we have broken down the score components, determining the SRS components follows a similar approach to \textbf{Equation \ref{eq:sts_over_sys_ep}}, except for each game we have three equations instead of one.
+
+\begin{align}
+    (P_{A,O} - HFA_O) - P_{B,D} &= SRS_{A,O} - SRS_{B,D} + \epsilon_1 \label{eq:off_def_1} \\
+    P_{B,O} - (P_{A,D} - HFA_D) &= SRS_{B,O} - SRS_{A,D} + \epsilon_2 \label{eq:off_def_2} \\
+    (P_{A,ST} - HFA_{ST}) - P_{B, ST} &= SRS_{A,ST} - SRS_{B,ST} + \epsilon_3
+\end{align}
+
+These equations simply formulate that teams A's offense will face off against team B's defense, teams A's defense will face off against team B's offense, and both teams special teams will face off.
+Keep in mind the equations are written for a game where team A is home and team B is away.
+The final week 18 SRS ratings and breakdowns for the 2024 NFL season are shown in \textbf{Table \ref{tab:srs_2024}}.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ l | r r r r }
+        \hline
+        \hline
+        Team & SRS & Offense & Defense & Special Teams\\
+        \hline
+        Detroit Lions & 13.8 & 9.8 & 2.1 & 1.9 \\
+        Baltimore Ravens & 9.9 & 7.8 & 0.6 & 1.5 \\
+        Green Bay Packers & 8.1 & 4.3 & 2.0 & 1.8 \\
+        Buffalo Bills & 8.1 & 7.8 & 0.0 & 0.3 \\
+        Philadelphia Eagles & 7.7 & 3.1 & 2.6 & 1.9 \\
+        Tampa Bay Buccaneers & 6.4 & 5.3 & 0.7 & 0.4 \\
+        Denver Broncos & 6.4 & 0.4 & 4.3 & 1.7 \\
+        Minnesota Vikings & 6.2 & 1.3 & 2.5 & 2.4 \\
+        Los Angeles Chargers & 5.3 & 0.0 & 3.0 & 2.2 \\
+        Kansas City Chiefs & 4.2 & 0.3 & 1.6 & 2.3 \\
+        Washington Commanders & 3.7 & 4.7 & -1.9 & 1.0 \\
+        Arizona Cardinals & 2.1 & 0.5 & 1.9 & -0.3 \\
+        Pittsburgh Steelers & 2.1 & -3.1 & 1.5 & 3.7 \\
+        Cincinnati Bengals & 1.4 & 3.6 & -3.8 & 1.6 \\
+        Seattle Seahawks & 1.3 & -0.7 & 2.9 & -0.9 \\
+        Los Angeles Rams & -0.1 & -0.3 & 0.7 & -0.4 \\
+        Houston Texans & -0.7 & -2.4 & 0.5 & 1.2 \\
+        San Francisco 49ers & -1.2 & 0.9 & -2.2 & 0.2 \\
+        Atlanta Falcons & -2.2 & -1.1 & -1.2 & 0.2 \\
+        Chicago Bears & -2.3 & -2.4 & 2.8 & -2.7 \\
+        Miami Dolphins & -3.0 & -3.4 & 1.5 & -1.1 \\
+        Indianapolis Colts & -3.7 & -0.3 & -2.5 & -0.9 \\
+        New Orleans Saints & -4.1 & -3.1 & 0.2 & -1.2 \\
+        New York Jets & -4.3 & -0.4 & -0.6 & -3.3 \\
+        Dallas Cowboys & -6.3 & -5.2 & -3.4 & 2.3 \\
+        Las Vegas Raiders & -6.4 & -4.6 & -0.7 & -1.1 \\
+        Jacksonville Jaguars & -7.5 & -2.5 & -2.8 & -2.2 \\
+        New York Giants & -8.0 & -6.9 & 0.2 & -1.4 \\
+        New England Patriots & -8.1 & -4.3 & -1.1 & -2.7 \\
+        Tennessee Titans & -8.4 & -4.2 & -1.9 & -2.3 \\
+        Cleveland Browns & -9.2 & -5.1 & -2.2 & -1.9 \\
+        Carolina Panthers & -11.0 & -0.1 & -7.2 & -3.7 \\
+        \hline
+        \hline
+    \end{tabular}
+    \textbf{\caption{2024 NFL Final Week 18 SRS Ratings}}
+    \label{tab:srs_2024}
+\end{table}
 
 \section{Predictive SRS (PSRS)}
 
