@@ -1,5 +1,5 @@
 from nfl_analytics import ratings_srs
-from nfl_analytics.utils import NflWeek
+from nfl_analytics.nfl_data import NflWeek
 import pandas as pd
 
 

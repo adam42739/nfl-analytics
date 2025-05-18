@@ -1,4 +1,5 @@
-from nfl_analytics import utils
+from nfl_analytics.nfl_data import transform
+from nfl_analytics.nfl_data import NflWeek
 import pandas as pd
 
 
@@ -12,11 +13,11 @@ def test_filter_data():
     df = pd.DataFrame(data)
 
     # Define the start and end weeks
-    start_week = utils.NflWeek(2023, 2)
-    end_week = utils.NflWeek(2023, 3)
+    start_week = NflWeek(2023, 2)
+    end_week = NflWeek(2023, 3)
 
     # Filter the DataFrame: start_week to end_week
-    filtered_df = utils.filter_data(
+    filtered_df = transform.filter_data(
         df, start_week=start_week, end_week=end_week
     ).reset_index(drop=True)
 
@@ -31,7 +32,7 @@ def test_filter_data():
     assert filtered_df.equals(expected_df)
 
     # Filter the DataFrame: up to end_week
-    filtered_df = utils.filter_data(df, end_week=end_week).reset_index(drop=True)
+    filtered_df = transform.filter_data(df, end_week=end_week).reset_index(drop=True)
 
     # Check the result
     expected_data = {
@@ -44,7 +45,9 @@ def test_filter_data():
     assert filtered_df.equals(expected_df)
 
     # Filter the DataFrame: start_week onwards
-    filtered_df = utils.filter_data(df, start_week=start_week).reset_index(drop=True)
+    filtered_df = transform.filter_data(df, start_week=start_week).reset_index(
+        drop=True
+    )
 
     # Check the result
     expected_data = {
@@ -59,7 +62,7 @@ def test_filter_data():
 
 def test_point_breakdown():
     # Calculate the point breakdown
-    point_breakdown = utils.point_breakdown(2024).reset_index()
+    point_breakdown = transform.point_breakdown(2024).reset_index()
 
     # THe expected result
     expected_df = pd.DataFrame(
@@ -187,7 +190,7 @@ def test_point_breakdown():
 
 def test_calc_mov():
     # Calculate the MOV
-    mov = utils.calc_mov(utils.NflWeek(2024, 1))
+    mov = transform.calc_mov(NflWeek(2024, 1))
 
     # The expected result
     expected_df = pd.DataFrame(

@@ -3,7 +3,7 @@ def test_datastore_file_setting():
     Test the setting of the datastore file path.
     """
     import tempfile
-    from nfl_analytics.datastore import set_datastore_path, _get_datastore_path
+    from nfl_analytics._local_storage import set_datastore_path, _get_datastore_path
 
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -19,7 +19,7 @@ def test_create_subdir():
     Test the creation of a subdirectory in the datastore path.
     """
     import os
-    from nfl_analytics.datastore import set_datastore_path, _create_subdir
+    from nfl_analytics._local_storage import set_datastore_path, _create_subdir
     import tempfile
 
     # Create a temporary directory
@@ -41,7 +41,7 @@ def test_frame_io():
     Test the dumping and loading of a DataFrame to/from the datastore.
     """
     import pandas as pd
-    from nfl_analytics.datastore import set_datastore_path, dump_frame, load_frame, file_exists
+    from nfl_analytics._local_storage import set_datastore_path, dump_frame, load_frame, file_exists
     import tempfile
 
     # Create a temporary directory

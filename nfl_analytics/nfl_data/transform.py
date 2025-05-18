@@ -1,27 +1,6 @@
 import pandas as pd
-from nfl_analytics import nfl_data
-
-
-class NflWeek:
-    """
-    A class to represent a week in the NFL season.
-    """
-
-    def __init__(self, season: int, week: int):
-        self.season = season
-        self.week = week
-
-    def __str__(self):
-        return f"{self.season} Week {self.week}"
-
-    def __repr__(self):
-        return f"NflWeek(year={self.season}, week={self.week})"
-
-
-#                                   =========================                                   #
-# --------------------------------- GENERAL UTILITY FUNCTIONS --------------------------------- #
-#                                   =========================                                   #
-# These functions are intended to have general use across multiple types of datasets in nfl_data.py
+from nfl_analytics.nfl_data import sourcing
+from nfl_analytics.nfl_data.utils import NflWeek
 
 
 def filter_data(
@@ -67,17 +46,6 @@ def filter_data(
     return df
 
 
-#                                   ==========================                                   #
-# --------------------------------- SPECIFIC UTILITY FUNCTIONS --------------------------------- #
-#                                   ==========================                                   #
-# These functions are intended to be used with one specific dataset in nfl_data.py
-
-
-# ------------------------------ #
-# Play-by-play Utility Functions #
-# ------------------------------ #
-
-
 def point_breakdown(season: int) -> pd.DataFrame:
     """
     Get the point breakdown (offensive vs. special teams points) for each game.
@@ -94,7 +62,7 @@ def point_breakdown(season: int) -> pd.DataFrame:
             The point breakdown for each play.
     """
     # Get the play-by-play data for the given season
-    pbp_df = nfl_data.get_pbp(season)
+    pbp_df = sourcing.get_pbp(season)
 
     # Get only scoring plays and relevant columns
     pbp_df = pbp_df[pbp_df["sp"].astype(bool)]
@@ -190,11 +158,6 @@ def point_breakdown(season: int) -> pd.DataFrame:
     return point_breakdown
 
 
-# --------------------------- #
-# Schedules Utility Functions #
-# --------------------------- #
-
-
 def calc_mov(week: NflWeek) -> pd.DataFrame:
     """
     Get the margin of victory (MOV) for each game in a given week.
@@ -210,7 +173,7 @@ def calc_mov(week: NflWeek) -> pd.DataFrame:
             The MOV by team.
     """
     # Get the schedule data for the given week
-    schedules = nfl_data.get_schedules()
+    schedules = sourcing.get_schedules()
     schedules = filter_data(
         schedules,
         start_week=NflWeek(week.season, 1),
