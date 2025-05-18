@@ -20,8 +20,10 @@ from nfl_analytics.nfl_data.sourcing import (
     get_ftn,
 )
 from nfl_analytics.nfl_data.transform import (
-    filter_data,
     get_point_breakdown,
     get_margin_of_victory,
 )
-from nfl_analytics.nfl_data.utils import NflWeek
+from nfl_analytics.nfl_data.utils import (
+    NflWeek,
+    filter_data,
+)
