@@ -13,38 +13,38 @@ def test_get_srs():
     # The expected SRS results
     expected_SRS = pd.DataFrame(
         [
-            {"Team": "DET", "MOV": 13.1, "SoS": 0.7, "SRS": 13.8},
-            {"Team": "BAL", "MOV": 9.2, "SoS": 0.6, "SRS": 9.9},
-            {"Team": "GB", "MOV": 7.2, "SoS": 0.9, "SRS": 8.1},
-            {"Team": "BUF", "MOV": 9.2, "SoS": -1.1, "SRS": 8.1},
-            {"Team": "PHI", "MOV": 9.4, "SoS": -1.7, "SRS": 7.7},
-            {"Team": "TB", "MOV": 6.9, "SoS": -0.4, "SRS": 6.4},
-            {"Team": "DEN", "MOV": 6.7, "SoS": -0.3, "SRS": 6.4},
-            {"Team": "MIN", "MOV": 5.9, "SoS": 0.3, "SRS": 6.2},
-            {"Team": "LAC", "MOV": 5.9, "SoS": -0.6, "SRS": 5.3},
-            {"Team": "KC", "MOV": 3.5, "SoS": 0.7, "SRS": 4.2},
-            {"Team": "WAS", "MOV": 5.5, "SoS": -1.8, "SRS": 3.7},
-            {"Team": "ARI", "MOV": 1.2, "SoS": 0.9, "SRS": 2.1},
-            {"Team": "PIT", "MOV": 1.9, "SoS": 0.1, "SRS": 2.1},
-            {"Team": "CIN", "MOV": 2.2, "SoS": -0.8, "SRS": 1.4},
-            {"Team": "SEA", "MOV": 0.4, "SoS": 0.8, "SRS": 1.3},
-            {"Team": "LA", "MOV": -1.1, "SoS": 1.1, "SRS": -0.1},
-            {"Team": "HOU", "MOV": 0.0, "SoS": -0.7, "SRS": -0.7},
-            {"Team": "SF", "MOV": -2.8, "SoS": 1.6, "SRS": -1.2},
-            {"Team": "ATL", "MOV": -2.0, "SoS": -0.2, "SRS": -2.2},
-            {"Team": "CHI", "MOV": -3.5, "SoS": 1.2, "SRS": -2.3},
-            {"Team": "MIA", "MOV": -1.1, "SoS": -1.9, "SRS": -3.0},
-            {"Team": "IND", "MOV": -2.9, "SoS": -0.7, "SRS": -3.7},
-            {"Team": "NO", "MOV": -3.5, "SoS": -0.6, "SRS": -4.1},
-            {"Team": "NYJ", "MOV": -3.9, "SoS": -0.5, "SRS": -4.3},
-            {"Team": "DAL", "MOV": -6.9, "SoS": 0.6, "SRS": -6.3},
-            {"Team": "LV", "MOV": -7.4, "SoS": 1.0, "SRS": -6.4},
-            {"Team": "JAX", "MOV": -6.8, "SoS": -0.8, "SRS": -7.5},
-            {"Team": "NYG", "MOV": -8.4, "SoS": 0.3, "SRS": -8.0},
-            {"Team": "NE", "MOV": -7.5, "SoS": -0.6, "SRS": -8.1},
-            {"Team": "TEN", "MOV": -8.8, "SoS": 0.4, "SRS": -8.4},
-            {"Team": "CLE", "MOV": -10.4, "SoS": 1.2, "SRS": -9.2},
-            {"Team": "CAR", "MOV": -11.4, "SoS": 0.4, "SRS": -11.0},
+            {"Team": "DET", "MoV": 13.1, "SoS": 0.7, "SRS": 13.8},
+            {"Team": "BAL", "MoV": 9.2, "SoS": 0.6, "SRS": 9.9},
+            {"Team": "GB", "MoV": 7.2, "SoS": 0.9, "SRS": 8.1},
+            {"Team": "BUF", "MoV": 9.2, "SoS": -1.1, "SRS": 8.1},
+            {"Team": "PHI", "MoV": 9.4, "SoS": -1.7, "SRS": 7.7},
+            {"Team": "TB", "MoV": 6.9, "SoS": -0.4, "SRS": 6.4},
+            {"Team": "DEN", "MoV": 6.7, "SoS": -0.3, "SRS": 6.4},
+            {"Team": "MIN", "MoV": 5.9, "SoS": 0.3, "SRS": 6.2},
+            {"Team": "LAC", "MoV": 5.9, "SoS": -0.6, "SRS": 5.3},
+            {"Team": "KC", "MoV": 3.5, "SoS": 0.7, "SRS": 4.2},
+            {"Team": "WAS", "MoV": 5.5, "SoS": -1.8, "SRS": 3.7},
+            {"Team": "ARI", "MoV": 1.2, "SoS": 0.9, "SRS": 2.1},
+            {"Team": "PIT", "MoV": 1.9, "SoS": 0.1, "SRS": 2.1},
+            {"Team": "CIN", "MoV": 2.2, "SoS": -0.8, "SRS": 1.4},
+            {"Team": "SEA", "MoV": 0.4, "SoS": 0.8, "SRS": 1.3},
+            {"Team": "LA", "MoV": -1.1, "SoS": 1.1, "SRS": -0.1},
+            {"Team": "HOU", "MoV": 0.0, "SoS": -0.7, "SRS": -0.7},
+            {"Team": "SF", "MoV": -2.8, "SoS": 1.6, "SRS": -1.2},
+            {"Team": "ATL", "MoV": -2.0, "SoS": -0.2, "SRS": -2.2},
+            {"Team": "CHI", "MoV": -3.5, "SoS": 1.2, "SRS": -2.3},
+            {"Team": "MIA", "MoV": -1.1, "SoS": -1.9, "SRS": -3.0},
+            {"Team": "IND", "MoV": -2.9, "SoS": -0.7, "SRS": -3.7},
+            {"Team": "NO", "MoV": -3.5, "SoS": -0.6, "SRS": -4.1},
+            {"Team": "NYJ", "MoV": -3.9, "SoS": -0.5, "SRS": -4.3},
+            {"Team": "DAL", "MoV": -6.9, "SoS": 0.6, "SRS": -6.3},
+            {"Team": "LV", "MoV": -7.4, "SoS": 1.0, "SRS": -6.4},
+            {"Team": "JAX", "MoV": -6.8, "SoS": -0.8, "SRS": -7.5},
+            {"Team": "NYG", "MoV": -8.4, "SoS": 0.3, "SRS": -8.0},
+            {"Team": "NE", "MoV": -7.5, "SoS": -0.6, "SRS": -8.1},
+            {"Team": "TEN", "MoV": -8.8, "SoS": 0.4, "SRS": -8.4},
+            {"Team": "CLE", "MoV": -10.4, "SoS": 1.2, "SRS": -9.2},
+            {"Team": "CAR", "MoV": -11.4, "SoS": 0.4, "SRS": -11.0},
         ]
     )
 
@@ -63,7 +63,7 @@ def test_get_srs_breakdown():
         [
             {
                 "Team": "DET",
-                "MOV": 13.1,
+                "MoV": 13.1,
                 "SoS": 0.7,
                 "SRS": 13.8,
                 "SRS_O": 9.8,
@@ -72,7 +72,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "BAL",
-                "MOV": 9.2,
+                "MoV": 9.2,
                 "SoS": 0.6,
                 "SRS": 9.9,
                 "SRS_O": 7.8,
@@ -81,7 +81,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "GB",
-                "MOV": 7.2,
+                "MoV": 7.2,
                 "SoS": 0.9,
                 "SRS": 8.1,
                 "SRS_O": 4.3,
@@ -90,7 +90,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "BUF",
-                "MOV": 9.2,
+                "MoV": 9.2,
                 "SoS": -1.1,
                 "SRS": 8.1,
                 "SRS_O": 7.8,
@@ -99,7 +99,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "PHI",
-                "MOV": 9.4,
+                "MoV": 9.4,
                 "SoS": -1.7,
                 "SRS": 7.7,
                 "SRS_O": 3.1,
@@ -108,7 +108,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "TB",
-                "MOV": 6.9,
+                "MoV": 6.9,
                 "SoS": -0.4,
                 "SRS": 6.4,
                 "SRS_O": 5.3,
@@ -117,7 +117,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "DEN",
-                "MOV": 6.7,
+                "MoV": 6.7,
                 "SoS": -0.3,
                 "SRS": 6.4,
                 "SRS_O": 0.4,
@@ -126,7 +126,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "MIN",
-                "MOV": 5.9,
+                "MoV": 5.9,
                 "SoS": 0.3,
                 "SRS": 6.2,
                 "SRS_O": 1.3,
@@ -135,7 +135,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "LAC",
-                "MOV": 5.9,
+                "MoV": 5.9,
                 "SoS": -0.6,
                 "SRS": 5.3,
                 "SRS_O": 0.0,
@@ -144,7 +144,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "KC",
-                "MOV": 3.5,
+                "MoV": 3.5,
                 "SoS": 0.7,
                 "SRS": 4.2,
                 "SRS_O": 0.3,
@@ -153,7 +153,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "WAS",
-                "MOV": 5.5,
+                "MoV": 5.5,
                 "SoS": -1.8,
                 "SRS": 3.7,
                 "SRS_O": 4.7,
@@ -162,7 +162,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "ARI",
-                "MOV": 1.2,
+                "MoV": 1.2,
                 "SoS": 0.9,
                 "SRS": 2.1,
                 "SRS_O": 0.5,
@@ -171,7 +171,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "PIT",
-                "MOV": 1.9,
+                "MoV": 1.9,
                 "SoS": 0.1,
                 "SRS": 2.1,
                 "SRS_O": -3.1,
@@ -180,7 +180,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "CIN",
-                "MOV": 2.2,
+                "MoV": 2.2,
                 "SoS": -0.8,
                 "SRS": 1.4,
                 "SRS_O": 3.6,
@@ -189,7 +189,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "SEA",
-                "MOV": 0.4,
+                "MoV": 0.4,
                 "SoS": 0.8,
                 "SRS": 1.3,
                 "SRS_O": -0.7,
@@ -198,7 +198,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "LA",
-                "MOV": -1.1,
+                "MoV": -1.1,
                 "SoS": 1.1,
                 "SRS": -0.1,
                 "SRS_O": -0.3,
@@ -207,7 +207,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "HOU",
-                "MOV": 0.0,
+                "MoV": 0.0,
                 "SoS": -0.7,
                 "SRS": -0.7,
                 "SRS_O": -2.4,
@@ -216,7 +216,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "SF",
-                "MOV": -2.8,
+                "MoV": -2.8,
                 "SoS": 1.6,
                 "SRS": -1.2,
                 "SRS_O": 0.9,
@@ -225,7 +225,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "ATL",
-                "MOV": -2.0,
+                "MoV": -2.0,
                 "SoS": -0.2,
                 "SRS": -2.2,
                 "SRS_O": -1.1,
@@ -234,7 +234,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "CHI",
-                "MOV": -3.5,
+                "MoV": -3.5,
                 "SoS": 1.2,
                 "SRS": -2.3,
                 "SRS_O": -2.4,
@@ -243,7 +243,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "MIA",
-                "MOV": -1.1,
+                "MoV": -1.1,
                 "SoS": -1.9,
                 "SRS": -3.0,
                 "SRS_O": -3.4,
@@ -252,7 +252,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "IND",
-                "MOV": -2.9,
+                "MoV": -2.9,
                 "SoS": -0.7,
                 "SRS": -3.7,
                 "SRS_O": -0.3,
@@ -261,7 +261,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "NO",
-                "MOV": -3.5,
+                "MoV": -3.5,
                 "SoS": -0.6,
                 "SRS": -4.1,
                 "SRS_O": -3.1,
@@ -270,7 +270,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "NYJ",
-                "MOV": -3.9,
+                "MoV": -3.9,
                 "SoS": -0.5,
                 "SRS": -4.3,
                 "SRS_O": -0.4,
@@ -279,7 +279,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "DAL",
-                "MOV": -6.9,
+                "MoV": -6.9,
                 "SoS": 0.6,
                 "SRS": -6.3,
                 "SRS_O": -5.2,
@@ -288,7 +288,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "LV",
-                "MOV": -7.4,
+                "MoV": -7.4,
                 "SoS": 1.0,
                 "SRS": -6.4,
                 "SRS_O": -4.6,
@@ -297,7 +297,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "JAX",
-                "MOV": -6.8,
+                "MoV": -6.8,
                 "SoS": -0.8,
                 "SRS": -7.5,
                 "SRS_O": -2.5,
@@ -306,7 +306,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "NYG",
-                "MOV": -8.4,
+                "MoV": -8.4,
                 "SoS": 0.3,
                 "SRS": -8.0,
                 "SRS_O": -6.9,
@@ -315,7 +315,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "NE",
-                "MOV": -7.5,
+                "MoV": -7.5,
                 "SoS": -0.6,
                 "SRS": -8.1,
                 "SRS_O": -4.3,
@@ -324,7 +324,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "TEN",
-                "MOV": -8.8,
+                "MoV": -8.8,
                 "SoS": 0.4,
                 "SRS": -8.4,
                 "SRS_O": -4.2,
@@ -333,7 +333,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "CLE",
-                "MOV": -10.4,
+                "MoV": -10.4,
                 "SoS": 1.2,
                 "SRS": -9.2,
                 "SRS_O": -5.1,
@@ -342,7 +342,7 @@ def test_get_srs_breakdown():
             },
             {
                 "Team": "CAR",
-                "MOV": -11.4,
+                "MoV": -11.4,
                 "SoS": 0.4,
                 "SRS": -11.0,
                 "SRS_O": -0.1,

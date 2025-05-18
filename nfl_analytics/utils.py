@@ -229,8 +229,9 @@ def calc_mov(week: NflWeek) -> pd.DataFrame:
 
     # Calculate the MOV
     mov = (points_scored["sum"] - points_allowed["sum"]) / points_scored["count"]
+    mov.name = "MoV"
+    mov.index.name = "Team"
     mov = mov.reset_index()
-    mov = mov.rename({"home_team": "Team", 0: "MOV"}, axis=1)
     mov = mov.sort_values(by="Team")
 
     return mov
