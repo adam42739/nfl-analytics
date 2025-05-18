@@ -1,7 +1,6 @@
 from nfl_analytics import nfl_data
 import pandas as pd
-from nfl_analytics import utils
-from nfl_analytics.utils import NflWeek
+from nfl_analytics.nfl_data import NflWeek
 import numpy as np
 
 
@@ -22,7 +21,7 @@ def get_srs(week: NflWeek) -> pd.DataFrame:
     """
     # Get the schedules data for this season up to the specified week
     schedules = nfl_data.get_schedules()
-    schedules = utils.filter_data(
+    schedules = nfl_data.filter_data(
         schedules,
         start_week=NflWeek(week.season, 1),
         end_week=week,
@@ -56,7 +55,7 @@ def get_srs(week: NflWeek) -> pd.DataFrame:
     x, residuals, rank, s = np.linalg.lstsq(teams_matrix, score_diff, rcond=None)
 
     # Calculate the MoV and SoS for each team
-    mov = utils.calc_mov(week)
+    mov = nfl_data.get_margin_of_victory(NflWeek(week.season, 1), week)
     sos = x - mov["MoV"].to_numpy()
 
     # Create the SRS DataFrame
@@ -89,7 +88,7 @@ def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     """
     # Get the game IDs for this season up to the specified week
     schedules = nfl_data.get_schedules()
-    schedules = utils.filter_data(
+    schedules = nfl_data.filter_data(
         schedules,
         start_week=NflWeek(week.season, 1),
         end_week=week,
@@ -97,7 +96,7 @@ def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     game_ids = schedules["game_id"].unique()
 
     # Get the point breakdown data for each game up to the specified week
-    point_breakdown = utils.point_breakdown(week.season)
+    point_breakdown = nfl_data.get_point_breakdown(week.season)
     point_breakdown = point_breakdown[point_breakdown.index.isin(game_ids)]
 
     # Calculate the home field advantages
@@ -184,7 +183,7 @@ def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     x, residuals, rank, s = np.linalg.lstsq(teams_matrix, score_diff, rcond=None)
 
     # Calculate the MOV and SoS for each team
-    mov = utils.calc_mov(week)
+    mov = nfl_data.get_margin_of_victory(NflWeek(week.season, 1), week)
     srs = x[:32] + x[32:64] + x[64:]
     sos = srs - mov["MoV"].to_numpy()
 

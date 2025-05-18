@@ -1,7 +1,8 @@
 import tempfile
-from nfl_analytics import datastore, nfl_data
+from nfl_analytics import _local_storage
 from typing import Callable
 import pandas as pd
+from nfl_analytics.nfl_data import sourcing
 
 
 def run_data_fetch_test(
@@ -26,11 +27,11 @@ def run_data_fetch_test(
     """
     with tempfile.TemporaryDirectory() as tempdir:
         # Get the current datastore path
-        current_path = datastore._get_datastore_path()
+        current_path = _local_storage._get_datastore_path()
 
         try:
             # Set the datastore path to a temporary directory
-            datastore.set_datastore_path(tempdir)
+            _local_storage.set_datastore_path(tempdir)
 
             # Fetch the data
             df = data_fetcher(**fetcher_args)
@@ -40,15 +41,15 @@ def run_data_fetch_test(
                 assert col in df.columns
 
             # Check that the file exists in the datastore
-            assert datastore.file_exists("nfl_data/", file_path)
+            assert _local_storage.file_exists("nfl_data/", file_path)
         finally:
             # Reset the datastore path to the original path
-            datastore.set_datastore_path(current_path)
+            _local_storage.set_datastore_path(current_path)
 
 
 def test_get_players():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_players,
+        data_fetcher=sourcing.get_players,
         expected_columns=[
             "college_conference",
             "current_team_id",
@@ -61,7 +62,7 @@ def test_get_players():
 
 def test_get_pbp():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pbp,
+        data_fetcher=sourcing.get_pbp,
         expected_columns=[
             "play_id",
             "game_id",
@@ -76,7 +77,7 @@ def test_get_pbp():
 
 def test_get_schedules():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_schedules,
+        data_fetcher=sourcing.get_schedules,
         expected_columns=[
             "game_id",
             "season",
@@ -91,7 +92,7 @@ def test_get_schedules():
 
 def test_get_participation():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_participation,
+        data_fetcher=sourcing.get_participation,
         expected_columns=[
             "nflverse_game_id",
             "old_game_id",
@@ -107,7 +108,7 @@ def test_get_participation():
 
 def test_get_weekly_stats():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_weekly_stats,
+        data_fetcher=sourcing.get_weekly_stats,
         expected_columns=[
             "player_id",
             "player_name",
@@ -120,7 +121,7 @@ def test_get_weekly_stats():
 
 def test_get_roster():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_roster,
+        data_fetcher=sourcing.get_roster,
         expected_columns=[
             "season",
             "team",
@@ -133,7 +134,7 @@ def test_get_roster():
         freq="weekly",
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_roster,
+        data_fetcher=sourcing.get_roster,
         expected_columns=[
             "season",
             "team",
@@ -149,7 +150,7 @@ def test_get_roster():
 
 def test_get_team_desc():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_team_desc,
+        data_fetcher=sourcing.get_team_desc,
         expected_columns=[
             "team_division",
             "team_color",
@@ -162,7 +163,7 @@ def test_get_team_desc():
 
 def test_get_officials():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_officials,
+        data_fetcher=sourcing.get_officials,
         expected_columns=[
             "game_id",
             "off_pos",
@@ -175,7 +176,7 @@ def test_get_officials():
 
 def test_get_score_lines():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_score_lines,
+        data_fetcher=sourcing.get_score_lines,
         expected_columns=[
             "away_team",
             "home_team",
@@ -189,7 +190,7 @@ def test_get_score_lines():
 
 def test_get_draft_picks():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_draft_picks,
+        data_fetcher=sourcing.get_draft_picks,
         expected_columns=[
             "cfb_player_id",
             "pfr_player_name",
@@ -203,7 +204,7 @@ def test_get_draft_picks():
 
 def test_get_combine():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_combine,
+        data_fetcher=sourcing.get_combine,
         expected_columns=[
             "pfr_id",
             "cfb_id",
@@ -220,7 +221,7 @@ def test_get_combine():
 
 def test_get_id_map():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_id_map,
+        data_fetcher=sourcing.get_id_map,
         expected_columns=[
             "sleeper_id",
             "nfl_id",
@@ -234,7 +235,7 @@ def test_get_id_map():
 
 def test_get_ngs():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_ngs,
+        data_fetcher=sourcing.get_ngs,
         expected_columns=[
             "percent_attempts_gte_eight_defenders",
             "avg_time_to_los",
@@ -247,7 +248,7 @@ def test_get_ngs():
         ngs_type="rushing",
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_ngs,
+        data_fetcher=sourcing.get_ngs,
         expected_columns=[
             "avg_completed_air_yards",
             "avg_intended_air_yards",
@@ -262,7 +263,7 @@ def test_get_ngs():
         ngs_type="passing",
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_ngs,
+        data_fetcher=sourcing.get_ngs,
         expected_columns=[
             "avg_intended_air_yards",
             "percent_share_of_intended_air_yards",
@@ -283,7 +284,7 @@ def test_get_ngs():
 
 def test_get_depth_chart():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_depth_chart,
+        data_fetcher=sourcing.get_depth_chart,
         expected_columns=[
             "season",
             "club_code",
@@ -304,7 +305,7 @@ def test_get_depth_chart():
 
 def test_get_injuries():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_injuries,
+        data_fetcher=sourcing.get_injuries,
         expected_columns=[
             "report_secondary_injury",
             "report_status",
@@ -320,7 +321,7 @@ def test_get_injuries():
 
 def test_get_qbr():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_qbr,
+        data_fetcher=sourcing.get_qbr,
         expected_columns=[
             "name_first",
             "name_last",
@@ -338,7 +339,7 @@ def test_get_qbr():
         freq="season",
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_qbr,
+        data_fetcher=sourcing.get_qbr,
         expected_columns=[
             "qbr_total",
             "pts_added",
@@ -358,7 +359,7 @@ def test_get_qbr():
         freq="weekly",
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_qbr,
+        data_fetcher=sourcing.get_qbr,
         expected_columns=[
             "pass",
             "run",
@@ -378,7 +379,7 @@ def test_get_qbr():
         freq="season",
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_qbr,
+        data_fetcher=sourcing.get_qbr,
         expected_columns=[
             "qb_plays",
             "epa_total",
@@ -400,7 +401,7 @@ def test_get_qbr():
 
 def test_get_pfr():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "season",
             "player",
@@ -419,7 +420,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "pocket_time",
             "times_blitzed",
@@ -440,7 +441,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "yds",
             "td",
@@ -459,7 +460,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "season",
             "player",
@@ -486,7 +487,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "def_targets",
             "def_completions_allowed",
@@ -505,7 +506,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "opponent",
             "pfr_player_name",
@@ -524,7 +525,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "opponent",
             "pfr_player_name",
@@ -541,7 +542,7 @@ def test_get_pfr():
         year=2023,
     )
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_pfr,
+        data_fetcher=sourcing.get_pfr,
         expected_columns=[
             "opponent",
             "pfr_player_name",
@@ -562,7 +563,7 @@ def test_get_pfr():
 
 def test_get_snap_counts():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_snap_counts,
+        data_fetcher=sourcing.get_snap_counts,
         expected_columns=[
             "pfr_player_id",
             "position",
@@ -582,7 +583,7 @@ def test_get_snap_counts():
 
 def test_get_ftn():
     run_data_fetch_test(
-        data_fetcher=nfl_data.get_ftn,
+        data_fetcher=sourcing.get_ftn,
         expected_columns=[
             "n_offense_backfield",
             "n_defense_box",

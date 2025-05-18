@@ -1,5 +1,5 @@
 """
-# NFL Data Module
+# Sourcing Module
 
 This module provides functions to retrieve and manage NFL data from the NFL Verse. 
 It supports fetching datasets such as play-by-play, rosters, injuries, and more, 
@@ -34,7 +34,7 @@ pbp = nfl_data.get_pbp(year=2023)
 ```
 """
 import pandas as pd
-from nfl_analytics import datastore
+from nfl_analytics import _local_storage
 from typing import Literal, Callable
 
 
@@ -170,9 +170,9 @@ def _get_data(
         filename = f"{data_type}-{args_str}.parquet"
 
     # if we are not forcing a refresh and the file exists, load the file, otherwise imprort from NFL Verse
-    if not force_refresh and datastore.file_exists(_DATASTORE_SUBDIR, filename):
+    if not force_refresh and _local_storage.file_exists(_DATASTORE_SUBDIR, filename):
         # load the file
-        df = datastore.load_frame(_DATASTORE_SUBDIR, filename)
+        df = _local_storage.load_frame(_DATASTORE_SUBDIR, filename)
 
         return df
     else:
@@ -180,7 +180,7 @@ def _get_data(
         df = _SOURCE_FUNCTIONS[data_type](args)
 
         # dump the file
-        datastore.dump_frame(df, _DATASTORE_SUBDIR, filename)
+        _local_storage.dump_frame(df, _DATASTORE_SUBDIR, filename)
 
         return df
 

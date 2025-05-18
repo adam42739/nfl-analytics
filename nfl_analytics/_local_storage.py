@@ -1,5 +1,5 @@
 """
-# Datastore Module
+# Local Storage Module
 
 This module provides utilities for managing a local datastore for storing and retrieving data files. 
 It includes functionality to set and clear the datastore path, create subdirectories, and handle 
