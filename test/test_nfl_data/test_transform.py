@@ -133,7 +133,7 @@ def test_get_point_breakdown():
 
 def test_get_margin_of_victory():
     # Calculate the MOV
-    mov = transform.get_margin_of_victory(NflWeek(2024, 1))
+    mov = transform.get_margin_of_victory(NflWeek(2024, 1), NflWeek(2024, 1))
 
     # The expected result
     expected_df = pd.DataFrame(

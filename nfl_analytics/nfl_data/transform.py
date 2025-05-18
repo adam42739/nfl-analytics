@@ -115,26 +115,29 @@ def get_point_breakdown(season: int) -> pd.DataFrame:
     return point_breakdown
 
 
-def get_margin_of_victory(week: NflWeek) -> pd.DataFrame:
+def get_margin_of_victory(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
     """
-    Get the margin of victory (MOV) for each game in a given week.
+    Get the margin of victory (MoV) for each game in a given week.
 
     Parameters
     ----------
-        week : NflWeek
-            The current week of the NFL season.
+        start_week : NflWeek
+            The start week to filter from (inclusive).
+
+        end_week : NflWeek
+            The end week to filter to (inclusive).
 
     Returns
     -------
         pd.DataFrame
-            The MOV by team.
+            The MoV by team.
     """
     # Get the schedule data for the given week
     schedules = sourcing.get_schedules()
     schedules = utils.filter_data(
         schedules,
-        start_week=NflWeek(week.season, 1),
-        end_week=week,
+        start_week=start_week,
+        end_week=end_week,
     )
 
     # Get each team's total points scored
