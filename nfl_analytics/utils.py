@@ -78,7 +78,7 @@ def filter_data(
 # ------------------------------ #
 
 
-def get_point_breakdown(season: int) -> pd.DataFrame:
+def point_breakdown(season: int) -> pd.DataFrame:
     """
     Get the point breakdown (offensive vs. special teams points) for each game.
     Scoring breakdown is sourced from the play-by-play data.
@@ -195,7 +195,7 @@ def get_point_breakdown(season: int) -> pd.DataFrame:
 # --------------------------- #
 
 
-def get_mov(week: NflWeek) -> pd.DataFrame:
+def calc_mov(week: NflWeek) -> pd.DataFrame:
     """
     Get the margin of victory (MOV) for each game in a given week.
 

@@ -56,7 +56,7 @@ def get_srs(week: NflWeek) -> pd.DataFrame:
     x, residuals, rank, s = np.linalg.lstsq(teams_matrix, score_diff, rcond=None)
 
     # Calculate the MOV and SoS for each team
-    mov = utils.get_mov(week)
+    mov = utils.calc_mov(week)
     sos = x - mov["MOV"].to_numpy()
 
     # Create the SRS DataFrame
@@ -97,7 +97,7 @@ def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     game_ids = schedules["game_id"].unique()
 
     # Get the point breakdown data for each game up to the specified week
-    point_breakdown = utils.get_point_breakdown(week.season)
+    point_breakdown = utils.point_breakdown(week.season)
     point_breakdown = point_breakdown[point_breakdown.index.isin(game_ids)]
 
     # Calculate the home field advantages
@@ -184,7 +184,7 @@ def get_srs_breakdown(week: NflWeek) -> pd.DataFrame:
     x, residuals, rank, s = np.linalg.lstsq(teams_matrix, score_diff, rcond=None)
 
     # Calculate the MOV and SoS for each team
-    mov = utils.get_mov(week)
+    mov = utils.calc_mov(week)
     srs = x[:32] + x[32:64] + x[64:]
     sos = srs - mov["MOV"].to_numpy()
 
