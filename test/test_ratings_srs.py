@@ -3,59 +3,14 @@ from nfl_analytics.nfl_data import NflWeek
 import pandas as pd
 
 
-def test_get_srs():
-    # Get the SRS for the end of the 2024 season
-    srs2024 = ratings_srs.get_srs(NflWeek(2024, 18))
-    srs2024 = (
-        srs2024.sort_values(by="SRS", ascending=False).round(1).reset_index(drop=True)
-    )
-
-    # The expected SRS results
-    expected_SRS = pd.DataFrame(
-        [
-            {"Team": "DET", "MoV": 13.1, "SoS": 0.7, "SRS": 13.8},
-            {"Team": "BAL", "MoV": 9.2, "SoS": 0.6, "SRS": 9.9},
-            {"Team": "GB", "MoV": 7.2, "SoS": 0.9, "SRS": 8.1},
-            {"Team": "BUF", "MoV": 9.2, "SoS": -1.1, "SRS": 8.1},
-            {"Team": "PHI", "MoV": 9.4, "SoS": -1.7, "SRS": 7.7},
-            {"Team": "TB", "MoV": 6.9, "SoS": -0.4, "SRS": 6.4},
-            {"Team": "DEN", "MoV": 6.7, "SoS": -0.3, "SRS": 6.4},
-            {"Team": "MIN", "MoV": 5.9, "SoS": 0.3, "SRS": 6.2},
-            {"Team": "LAC", "MoV": 5.9, "SoS": -0.6, "SRS": 5.3},
-            {"Team": "KC", "MoV": 3.5, "SoS": 0.7, "SRS": 4.2},
-            {"Team": "WAS", "MoV": 5.5, "SoS": -1.8, "SRS": 3.7},
-            {"Team": "ARI", "MoV": 1.2, "SoS": 0.9, "SRS": 2.1},
-            {"Team": "PIT", "MoV": 1.9, "SoS": 0.1, "SRS": 2.1},
-            {"Team": "CIN", "MoV": 2.2, "SoS": -0.8, "SRS": 1.4},
-            {"Team": "SEA", "MoV": 0.4, "SoS": 0.8, "SRS": 1.3},
-            {"Team": "LA", "MoV": -1.1, "SoS": 1.1, "SRS": -0.1},
-            {"Team": "HOU", "MoV": 0.0, "SoS": -0.7, "SRS": -0.7},
-            {"Team": "SF", "MoV": -2.8, "SoS": 1.6, "SRS": -1.2},
-            {"Team": "ATL", "MoV": -2.0, "SoS": -0.2, "SRS": -2.2},
-            {"Team": "CHI", "MoV": -3.5, "SoS": 1.2, "SRS": -2.3},
-            {"Team": "MIA", "MoV": -1.1, "SoS": -1.9, "SRS": -3.0},
-            {"Team": "IND", "MoV": -2.9, "SoS": -0.7, "SRS": -3.7},
-            {"Team": "NO", "MoV": -3.5, "SoS": -0.6, "SRS": -4.1},
-            {"Team": "NYJ", "MoV": -3.9, "SoS": -0.5, "SRS": -4.3},
-            {"Team": "DAL", "MoV": -6.9, "SoS": 0.6, "SRS": -6.3},
-            {"Team": "LV", "MoV": -7.4, "SoS": 1.0, "SRS": -6.4},
-            {"Team": "JAX", "MoV": -6.8, "SoS": -0.8, "SRS": -7.5},
-            {"Team": "NYG", "MoV": -8.4, "SoS": 0.3, "SRS": -8.0},
-            {"Team": "NE", "MoV": -7.5, "SoS": -0.6, "SRS": -8.1},
-            {"Team": "TEN", "MoV": -8.8, "SoS": 0.4, "SRS": -8.4},
-            {"Team": "CLE", "MoV": -10.4, "SoS": 1.2, "SRS": -9.2},
-            {"Team": "CAR", "MoV": -11.4, "SoS": 0.4, "SRS": -11.0},
-        ]
-    )
-
-    assert srs2024.equals(expected_SRS)
-
-
-def test_get_srs_breakdown():
+def test_ratings_srs():
     # Get the SRS breakdown for the end of the 2024 season
-    srs2024 = ratings_srs.get_srs_breakdown(NflWeek(2024, 18))
+    srs_model = ratings_srs.RatingsSRS(NflWeek(2024, 18))
+    srs_model.fit()
     srs2024 = (
-        srs2024.sort_values(by="SRS", ascending=False).round(1).reset_index(drop=True)
+        srs_model.srs_frame.sort_values(by="SRS", ascending=False)
+        .round(1)
+        .reset_index(drop=True)
     )
 
     # The expected SRS results
