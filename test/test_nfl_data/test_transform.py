@@ -60,9 +60,9 @@ def test_filter_data():
     assert filtered_df.equals(expected_df)
 
 
-def test_point_breakdown():
+def test_get_point_breakdown():
     # Calculate the point breakdown
-    point_breakdown = transform.point_breakdown(2024).reset_index()
+    point_breakdown = transform.get_point_breakdown(2024).reset_index()
 
     # THe expected result
     expected_df = pd.DataFrame(
@@ -188,9 +188,9 @@ def test_point_breakdown():
     assert point_breakdown.equals(expected_df)
 
 
-def test_calc_mov():
+def test_get_margin_of_victory():
     # Calculate the MOV
-    mov = transform.calc_mov(NflWeek(2024, 1))
+    mov = transform.get_margin_of_victory(NflWeek(2024, 1))
 
     # The expected result
     expected_df = pd.DataFrame(

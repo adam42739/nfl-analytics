@@ -21,7 +21,7 @@ from nfl_analytics.nfl_data.sourcing import (
 )
 from nfl_analytics.nfl_data.transform import (
     filter_data,
-    point_breakdown,
-    calc_mov,
+    get_point_breakdown,
+    get_margin_of_victory,
 )
 from nfl_analytics.nfl_data.utils import NflWeek
