@@ -183,3 +183,48 @@ def test_point_breakdown():
     ].reset_index(drop=True)
 
     assert point_breakdown.equals(expected_df)
+
+
+def test_calc_mov():
+    # Calculate the MOV
+    mov = utils.calc_mov(utils.NflWeek(2024, 1))
+
+    # The expected result
+    expected_df = pd.DataFrame(
+        [
+            {"Team": "ARI", "MoV": -6.0},
+            {"Team": "ATL", "MoV": -8.0},
+            {"Team": "BAL", "MoV": -7.0},
+            {"Team": "BUF", "MoV": 6.0},
+            {"Team": "CAR", "MoV": -37.0},
+            {"Team": "CHI", "MoV": 7.0},
+            {"Team": "CIN", "MoV": -6.0},
+            {"Team": "CLE", "MoV": -16.0},
+            {"Team": "DAL", "MoV": 16.0},
+            {"Team": "DEN", "MoV": -6.0},
+            {"Team": "DET", "MoV": 6.0},
+            {"Team": "GB", "MoV": -5.0},
+            {"Team": "HOU", "MoV": 2.0},
+            {"Team": "IND", "MoV": -2.0},
+            {"Team": "JAX", "MoV": -3.0},
+            {"Team": "KC", "MoV": 7.0},
+            {"Team": "LA", "MoV": -6.0},
+            {"Team": "LAC", "MoV": 12.0},
+            {"Team": "LV", "MoV": -12.0},
+            {"Team": "MIA", "MoV": 3.0},
+            {"Team": "MIN", "MoV": 22.0},
+            {"Team": "NE", "MoV": 6.0},
+            {"Team": "NO", "MoV": 37.0},
+            {"Team": "NYG", "MoV": -22.0},
+            {"Team": "NYJ", "MoV": -13.0},
+            {"Team": "PHI", "MoV": 5.0},
+            {"Team": "PIT", "MoV": 8.0},
+            {"Team": "SEA", "MoV": 6.0},
+            {"Team": "SF", "MoV": 13.0},
+            {"Team": "TB", "MoV": 17.0},
+            {"Team": "TEN", "MoV": -7.0},
+            {"Team": "WAS", "MoV": -17.0},
+        ]
+    )
+
+    assert mov.equals(expected_df)
