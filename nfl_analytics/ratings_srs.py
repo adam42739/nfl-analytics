@@ -26,6 +26,17 @@ class _RatingsSRSFitData:
     s: np.ndarray = None
 
 
+@dataclass
+class _RatingsSRSPredictScheduleData:
+    """
+    Data class to hold the data used in the SRS prediction process.
+    """
+
+    start_week: NflWeek = None
+    end_week: NflWeek = None
+    games: pd.DataFrame = None
+
+
 class RatingsSRS:
     """
     Simple Rating System (SRS) model for NFL teams.
@@ -75,9 +86,7 @@ class RatingsSRS:
         neutral_games = self._data.schedules.loc[
             self._data.schedules["location"] == "Neutral", "game_id"
         ]
-        self._data.neutral_mask = self._data.point_breakdown.index.isin(
-            neutral_games
-        )
+        self._data.neutral_mask = self._data.point_breakdown.index.isin(neutral_games)
 
     def _fit_calculate_hfa(self):
         """
@@ -240,9 +249,7 @@ class RatingsSRS:
             self._data.residuals,
             self._data.rank,
             self._data.s,
-        ) = np.linalg.lstsq(
-            self._data.teams_matrix, self._data.score_diff, rcond=None
-        )
+        ) = np.linalg.lstsq(self._data.teams_matrix, self._data.score_diff, rcond=None)
 
     def _fit_create_srs_frame(self):
         """
@@ -353,3 +360,176 @@ class RatingsSRS:
             "defensive": spread_d,
             "special": spread_st,
         }
+
+    def predict_schedule(self, start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
+        """
+        Predict the spreads for a given schedule.
+
+        Parameters
+        ----------
+        start_week : NflWeek
+            The start week of the schedule (inclusive).
+        end_week : NflWeek
+            The end week of the schedule (inclusive).
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the predicted spreads for each game in the schedule.
+        """
+        self._data = _RatingsSRSPredictScheduleData(
+            start_week=start_week, end_week=end_week
+        )
+
+        self._predict_schedule_get_data()
+        self._predict_schedule_merge_srs()
+        self._predict_schedule_predict_spreads()
+        self._predict_schedule_actual_spreads()
+
+        return_frame = self._data.games.copy()
+
+        del self._data
+
+        return return_frame
+
+    def _predict_schedule_get_data(self):
+        """
+        Get the relevant data for the SRS prediction process.
+        """
+        # Get the games data for the specified weeks
+        schedules = nfl_data.get_schedules()
+        self._data.games = nfl_data.filter_data(
+            schedules,
+            self._data.start_week,
+            self._data.end_week,
+        )[["game_id", "location"]]
+        self._data.games["is_neutral"] = self._data.games["location"] == "Neutral"
+        self._data.games = self._data.games.drop(columns=["location"])
+
+        # Get the point breakdown data for each game
+        point_breakdown = pd.concat(
+            [
+                nfl_data.get_point_breakdown(season)
+                for season in range(
+                    self._data.start_week.season,
+                    self._data.end_week.season + 1,
+                )
+            ]
+        )
+        self._data.games = pd.merge(
+            self._data.games, point_breakdown, on="game_id", how="left"
+        )
+
+    def _predict_schedule_merge_srs(self):
+        """
+        Merge the SRS data with the games data.
+        """
+        # Merge home team SRS data
+        self._data.games = pd.merge(
+            self._data.games,
+            self.srs_frame[["Team", "SRS", "SRS_O", "SRS_D", "SRS_ST"]].rename(
+                {
+                    "SRS": "SRS_home",
+                    "SRS_O": "SRS_O_home",
+                    "SRS_D": "SRS_D_home",
+                    "SRS_ST": "SRS_ST_home",
+                },
+                axis="columns",
+            ),
+            left_on="home_team",
+            right_on="Team",
+            how="left",
+        ).drop(columns=["Team"])
+
+        # Merge away team SRS data
+        self._data.games = pd.merge(
+            self._data.games,
+            self.srs_frame[["Team", "SRS", "SRS_O", "SRS_D", "SRS_ST"]].rename(
+                {
+                    "SRS": "SRS_away",
+                    "SRS_O": "SRS_O_away",
+                    "SRS_D": "SRS_D_away",
+                    "SRS_ST": "SRS_ST_away",
+                },
+                axis="columns",
+            ),
+            left_on="away_team",
+            right_on="Team",
+            how="left",
+        ).drop(columns=["Team"])
+
+    def _predict_schedule_predict_spreads(self):
+        """
+        Calculate the predicted spreads for each game in the schedule.
+        """
+        # Overal game spreads
+        self._data.games["pred_spread"] = (
+            self._data.games["SRS_home"]
+            - self._data.games["SRS_away"]
+            + self._hfa * ~self._data.games["is_neutral"]
+        )
+
+        # Offensive component of the spread
+        self._data.games["pred_spread_O"] = (
+            self._data.games["SRS_O_home"]
+            - self._data.games["SRS_O_away"]
+            + self._hfa_o * ~self._data.games["is_neutral"]
+        )
+
+        # Defensive component of the spread
+        self._data.games["pred_spread_D"] = (
+            self._data.games["SRS_D_home"]
+            - self._data.games["SRS_D_away"]
+            + self._hfa_d * ~self._data.games["is_neutral"]
+        )
+
+        # Special teams component of the spread
+        self._data.games["pred_spread_ST"] = (
+            self._data.games["SRS_ST_home"]
+            - self._data.games["SRS_ST_away"]
+            + self._hfa_st * ~self._data.games["is_neutral"]
+        )
+
+        # Drop unnecessary columns
+        self._data.games = self._data.games.drop(
+            columns=[
+                "is_neutral",
+                "SRS_home",
+                "SRS_away",
+                "SRS_O_home",
+                "SRS_O_away",
+                "SRS_D_home",
+                "SRS_D_away",
+                "SRS_ST_home",
+                "SRS_ST_away",
+            ]
+        )
+
+    def _predict_schedule_actual_spreads(self):
+        """
+        Calculate the actual spreads for each game in the schedule.
+        """
+        # Offensive component of the spread
+        self._data.games["spread_O"] = (
+            self._data.games["home_offensive_points"]
+            - self._data.games["away_offensive_points"]
+        )
+
+        # Defensive component of the spread
+        self._data.games["spread_D"] = (
+            self._data.games["home_defensive_points"]
+            - self._data.games["away_defensive_points"]
+        )
+
+        # Special teams component of the spread
+        self._data.games["spread_ST"] = (
+            self._data.games["home_special_teams_points"]
+            - self._data.games["away_special_teams_points"]
+        )
+
+        # Overall game spread
+        self._data.games["spread"] = (
+            self._data.games["spread_O"]
+            + self._data.games["spread_D"]
+            + self._data.games["spread_ST"]
+        )
