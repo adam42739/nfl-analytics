@@ -45,27 +45,42 @@ class RatingsSRS:
             self._point_breakdown.index.isin(self._game_ids)
         ]
 
+        # Get a mask of games played at a neutral site, aligned with the point breakdown
+        neutral_games = self._schedules.loc[
+            self._schedules["location"] == "Neutral", "game_id"
+        ]
+        self._neutral_mask = self._point_breakdown.index.isin(neutral_games)
+
     def _calculate_hfa(self):
         """
         Calculate the home field advantage (HFA) for the given week.
         """
         # Offensive HFA
-        self._hfa_o = (
-            self._point_breakdown["home_offensive_points"].mean()
-            - self._point_breakdown["away_offensive_points"].mean()
-        )
+        home_points = self._point_breakdown.loc[
+            ~self._neutral_mask, "home_offensive_points"
+        ]
+        away_points = self._point_breakdown.loc[
+            ~self._neutral_mask, "away_offensive_points"
+        ]
+        self._hfa_o = home_points.mean() - away_points.mean()
 
         # Defensive HFA
-        self._hfa_d = (
-            self._point_breakdown["home_defensive_points"].mean()
-            - self._point_breakdown["away_defensive_points"].mean()
-        )
+        home_points = self._point_breakdown.loc[
+            ~self._neutral_mask, "home_defensive_points"
+        ]
+        away_points = self._point_breakdown.loc[
+            ~self._neutral_mask, "away_defensive_points"
+        ]
+        self._hfa_d = home_points.mean() - away_points.mean()
 
         # Special Teams HFA
-        self._hfa_st = (
-            self._point_breakdown["home_special_teams_points"].mean()
-            - self._point_breakdown["away_special_teams_points"].mean()
-        )
+        home_points = self._point_breakdown.loc[
+            ~self._neutral_mask, "home_special_teams_points"
+        ]
+        away_points = self._point_breakdown.loc[
+            ~self._neutral_mask, "away_special_teams_points"
+        ]
+        self._hfa_st = home_points.mean() - away_points.mean()
 
         # Calculate the overall HFA
         self._hfa = self._hfa_o + self._hfa_d + self._hfa_st
@@ -88,21 +103,21 @@ class RatingsSRS:
         self._score_diff_eq1 = (
             self._point_breakdown["home_offensive_points"].to_numpy()
             - self._point_breakdown["away_defensive_points"].to_numpy()
-            - self._hfa_o
+            - self._hfa_o * ~self._neutral_mask
         )
 
         # Defensive score differential
         self._score_diff_eq2 = (
             self._point_breakdown["away_offensive_points"].to_numpy()
             - self._point_breakdown["home_defensive_points"].to_numpy()
-            + self._hfa_d
+            + self._hfa_d * ~self._neutral_mask
         )
 
         # Special teams score differential
         self._score_diff_eq3 = (
             self._point_breakdown["home_special_teams_points"].to_numpy()
             - self._point_breakdown["away_special_teams_points"].to_numpy()
-            - self._hfa_st
+            - self._hfa_st * ~self._neutral_mask
         )
 
         # Concatenate the score differentials
