@@ -316,7 +316,7 @@ def test_ratings_srs_predict_game():
     srs_model.fit()
 
     # Test the predict method
-    prediction = srs_model.predict("DET", "WAS")
+    prediction = srs_model.predict_game("DET", "WAS")
     expected_result = {
         "spread": 11.733852555308562,
         "offensive": 12.992881848733948,
