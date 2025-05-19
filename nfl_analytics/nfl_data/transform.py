@@ -112,6 +112,18 @@ def get_point_breakdown(season: int) -> pd.DataFrame:
         }
     )
 
+    # Calculate the total points for each team
+    point_breakdown["home_points"] = (
+        point_breakdown["home_offensive_points"]
+        + point_breakdown["home_defensive_points"]
+        + point_breakdown["home_special_teams_points"]
+    )
+    point_breakdown["away_points"] = (
+        point_breakdown["away_offensive_points"]
+        + point_breakdown["away_defensive_points"]
+        + point_breakdown["away_special_teams_points"]
+    )
+
     return point_breakdown
 
 
