@@ -2,7 +2,7 @@
 
 \usepackage[a4paper, margin=0.5in]{geometry}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{xurl}
 \usepackage{amsmath}
 \usepackage{caption}
@@ -26,12 +26,137 @@
     \vfill
 \end{titlepage}
 
+\chapter*{Acknowledgements}
+
 \tableofcontents
 \newpage
 
-\chapter{Rating Systems}
+\chapter{Introduction}
 
-\section{Simple Rating System (SRS)}
+\section{Point Rating Systems}
+
+One class of models we explore in this report are what we call \textit{point rating systems}.
+This is a term we've made-up to describe the type of models that rates teams based on a point differential scale.
+A key property of these models is the ability to predict game spreads by subtracting team ratings (potentially with an adjustment for home field advantage).
+For example, if team A has a rating of 10 and team B has a rating of $-$5, the system's predicted spread for a game between the two teams would be $10 - (-5)=15$.
+
+One of the most well-known point rating systems is ESPN's Football Power Index (FPI) \cite{espn-fpi}, which measures team strength as ``how many points above or below average a team is''.
+An interesting feature of the FPI is the rating break down into three components: offense, defense, and special teams.
+For example, to close out the end of the 2024 NFL season, ESPN had the Baltimore Ravens atop the FPI with a rating of 8.1 where 6.8 of that came from offensive, 1.5 from defense, and $-$0.1 from special teams (rounding seems to have caused some error here, but with more precision the three components should always sum to the overall rating).
+It's worth noting that the FPI components can also be thought of as point rating systems themselves.
+For example, if Baltimore were to faceoff against the New York Giants, whose offensive FPI is $-6.5$, we can think of $8.1 - (-6.5) = 14.6$ as \textit{the part of the total spread attributable to the discrepancy in both teams' offenses}.
+In this case, these components can be useful in helping us understand that the Ravens-Giants spread is predicted to be large not just because the Ravens put up a lot of points, but also because the Giants struggle to score.
+
+Of course, point rating systems have their limitations.
+Fundamentally, they assume there is a \textit{scale of betterness}, meaning if A is ranked higher than B, and B is higher than C, then A \textit{must} be higher than C.
+Although, this might not always be the case in the NFL.
+Team C might be more equipped to expose A's weakness, and we have the parity of A beats B who beats C who then beats A.
+Maybe even in a hypothetical world where each team plays each other hundreds of times we still see this parity in the long-run.
+
+\subsection*{Evaluation}
+
+We can evaluate the accuracy of point rating systems a few different ways.
+The most obvious being to compare the predicted spreads against the actual spreads -- analyzing the root-mean-square deviation (RMSD) for example.
+We can also analyze accuracy or win percentage, the rate is which the system correctly predicts game winners.
+A more interesting evaluation methodology -- particularly for the sinners among us -- would be to craft betting strategies against the line and analyze performance over time.
+Throughout this report, we will typically present the following five evaluation metrics for any point rating system:
+
+\begin{enumerate}
+    \item \textbf{Spread Error (SpE)}
+
+    RMSD of the predicted spread against the actual spread:
+
+    \begin{equation}
+        SpE = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(P_i - A_i)^2}
+    \end{equation}
+
+    Here $P_i$ is the predicted spread and $A_i$ is the actual spread.
+
+    \item \textbf{Spread Bias (SpB)}:
+
+    Bias of the predicted spread against the actual spread, in units of points:
+
+    \begin{equation}
+        SpE = \frac{1}{N}\sum_{i=1}^{N}(P_i - A_i)
+    \end{equation}
+
+    Ideally, this should be close to 0.
+
+    \item \textbf{Win Percentage (W\%)}:
+    
+    The percentage of games the system correctly predicts the winner.
+
+    \begin{equation}
+        W\% = \frac{1}{N}\sum_{i=1}^{N}W_i
+    \end{equation}
+
+    Here $W_i$ is an indicator that takes 1 if the system predicts correctly and 0 otherwise.
+
+    \item \textbf{Unweighted Betting Strategy (UBS)}:
+    
+    The per-game return on a betting strategy in which we take a $-115$ over/under bet on the line.
+    For example, if we predict team A by 10.5 and the line has A by 12.5, we bet the under on the line.
+
+    \begin{equation}
+        UBS = -115 + 200\times\frac{1}{N}\sum_{i=1}^{N}O_i
+    \end{equation}
+
+    Here $O_i$ is the outcome of the bet (1 for win, 0 for loss).
+\end{enumerate}
+
+\section{Prediction Systems}
+
+\section{Probabilistic Systems}
+
+Both point rating systems and prediction systems can be formulated probabilistically.
+That is, for a particular game, rather than predicting a single number for the point spread, we predict a distribution of possible spreads.
+This can be useful for understanding the uncertainty of our models and even determining the confidence in our predictions.
+We present a few additional evaluation metrics for probabilistic systems:
+
+\begin{enumerate}
+    \item \textbf{Weighted Win Percentage (WW\%)}:
+
+    The win percentage of the system, weighted by the system's prediction confidence.
+    The prediction confidence is simply the probability the system assigns to its prediction (the probability that it thinks it will be right).
+
+    \begin{equation}
+        WW\% = \frac{\sum_{i=1}^{N}W_i \times Pr_i}{\sum_{i=1}^{N}Pr_i}
+    \end{equation}
+
+    Here $W_i$ is an indicator that takes 1 the system predicts correctly and 0 otherwise while $Pr_i$ is the prediction confidence.
+
+    \item \textbf{Weighted Betting Strategy (WBS)}:
+    
+    The per-game return on a betting strategy in which we take a $-115$ over/under bet on the line, weighted by the system's prediction confidence.
+    The prediction confidence for a betting strategy is the probability the system assigns to its \textit{prediction on the line}, rather than its prediction on the game.
+
+    \begin{equation}
+        WBS = -115 + 200\times\frac{\sum_{i=1}^{N}O_i\times Pr_i}{\sum_{i=1}^NPr_i}
+    \end{equation}
+
+    \item \textbf{Probabilistic Calibration (PC)}:
+    
+    Arguably the most important evaluation metric for probabilistic systems is calibration.
+    Calibration is a measure of how well the system's predicted probabilities match the frequency of actual outcomes.
+    For example, a system could on average be predicting the spread quite well, but if it is consistently predicting non-zero probabilities for the spread to be $+100$, then we would say the system is poorly calibrated since a spread of $+100$ is nearly impossible.
+    Additionally, if a system assigns a $10\%$ probability for its prediction to be wrong by 12 or more points, we should expect to see this amount of error in approximately $10\%$ of real games (if the system is well calibrated).
+
+    We define probabilistic calibration as the root-mean-square deviation (RMSD) of a P-P plot from $y=x$.
+    A P-P plot is a plot of the predicted probabilities against the actual probabilities where a perfectly calibrated model should look like a straight line $y=x$.
+    The RMSD of a P-P plot from $y=x$ will tell us how far a system is from perfect calibration ($PC=0$).
+    The calculation of the actual probabilities involves ordering all the predicted probabilities and then calculating the actual probabilities as the cumulative distribution function (CDF) of the ordered predicted probabilities.
+    For example, if the predicted probability for a given game is 0.95, and 75\% of the games have a predicted probability less than 0.95, then the actual probability for that game is 0.75.
+
+    \begin{equation}
+        PC=\sqrt{\frac{1}{N}\sum_{i=1}^{N}(p_i - \hat{p}_i)^2}
+    \end{equation}
+
+    Here $p_i$ and $\hat{p}_i$ is the actual and predicted probabilities, respectively.
+\end{enumerate}
+
+\chapter{Simple Rating System}
+
+\section{The Simple System}
 
 The Simple Rating System (SRS) is a straightforward method used to evaluate teams based on their average point differential adjusted for the strength of their opponents. 
 Though its exact origins are unclear in my research, Doug Drinen of Sports Reference discussed the SRS and its calculation in a series of blog posts in 2006 \cite{drinen06-1,drinen06-2}.
@@ -67,7 +192,7 @@ The more appropriate system instead includes an error term $\epsilon$, where the
     \end{aligned}
 \end{equation}
 
-\subsection{SRS Breakdown}
+\section{Rating Breakdown}
 
 We can break down a team's SRS into three components: offensive ($O$), defensive ($D$), and special teams ($ST$).
 
@@ -160,7 +285,16 @@ The final week 18 SRS ratings and breakdowns for the 2024 NFL season are shown i
     \end{tabular}
 \end{table}
 
+\section{A Probabilistic Framework}
+
+\section{Performance}
+
+\chapter{Linear Predictive Point Rating System}
+
+\chapter{Generalized Non-Linear Predictive System}
+
 \begin{thebibliography}{9}
+    \bibitem{espn-fpi} ``NFL Football Power Index (FPI)'', \textit{ESPN}, \url{https://www.espn.com/nfl/fpi}
     \bibitem{drinen06-1} Drinen D. (2006), ``A very simple ranking system'', \textit{Pro-Football-Reference}, \url{https://web.archive.org/web/20161031224357/http://www.pro-football-reference.com/blog/index4837.html}
     \bibitem{drinen06-2} Drinen D. (2006), ``Another ranking system'', \textit{Pro-Football-Reference}, \url{https://web.archive.org/web/20161102124021/http://www.pro-football-reference.com/blog/indexba52.html?p=39}
 \end{thebibliography}
