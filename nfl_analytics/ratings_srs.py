@@ -246,7 +246,7 @@ class RatingsSRS:
             self.srs_frame["SRS_ST"] - self.srs_frame["SRS_ST"].mean()
         )
 
-    def predict(
+    def predict_game(
         self, home_team: str, away_team: str, is_neutral: bool = False
     ) -> dict[str, float]:
         """
