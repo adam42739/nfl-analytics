@@ -308,3 +308,20 @@ def test_ratings_srs():
     )
 
     assert srs2024.equals(expected_SRS)
+
+
+def test_ratings_srs_predict():
+    # Get the SRS breakdown for the end of the 2024 season
+    srs_model = ratings_srs.RatingsSRS(NflWeek(2024, 18))
+    srs_model.fit()
+
+    # Test the predict method
+    prediction = srs_model.predict("DET", "WAS")
+    expected_result = {
+        "spread": 11.733852555308562,
+        "offensive": 12.992881848733948,
+        "defensive": -2.5418975530710473,
+        "special": 1.2828682596456606,
+    }
+
+    assert prediction == expected_result

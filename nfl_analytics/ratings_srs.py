@@ -245,3 +245,68 @@ class RatingsSRS:
         self.srs_frame["SRS_ST"] = (
             self.srs_frame["SRS_ST"] - self.srs_frame["SRS_ST"].mean()
         )
+
+    def predict(
+        self, home_team: str, away_team: str, is_neutral: bool = False
+    ) -> dict[str, float]:
+        """
+        Predict the spread differential for a given matchup.
+
+        Parameters
+        ----------
+        home_team : str
+            The home team.
+        away_team : str
+            The away team.
+        is_neutral : bool, optional
+            Whether the game is at a neutral site (default is False).
+
+        Returns
+        -------
+        dict[str, float]
+            A dictionary containing the predicted spreads for the matchup.
+            Keys are:
+            - "spread": The predicted spread.
+            - "offensive": The predicted offensive componenet of the spread.
+            - "defensive": The predicted defensive component of the spread.
+            - "special": The predicted special teams component of the spread.
+        """
+        # Get the SRS values for the teams
+        home_srs = self.srs_frame.loc[
+            self.srs_frame["Team"] == home_team, "SRS"
+        ].values[0]
+        home_srs_o = self.srs_frame.loc[
+            self.srs_frame["Team"] == home_team, "SRS_O"
+        ].values[0]
+        home_srs_d = self.srs_frame.loc[
+            self.srs_frame["Team"] == home_team, "SRS_D"
+        ].values[0]
+        home_srs_st = self.srs_frame.loc[
+            self.srs_frame["Team"] == home_team, "SRS_ST"
+        ].values[0]
+        away_srs = self.srs_frame.loc[
+            self.srs_frame["Team"] == away_team, "SRS"
+        ].values[0]
+        away_srs_o = self.srs_frame.loc[
+            self.srs_frame["Team"] == away_team, "SRS_O"
+        ].values[0]
+        away_srs_d = self.srs_frame.loc[
+            self.srs_frame["Team"] == away_team, "SRS_D"
+        ].values[0]
+        away_srs_st = self.srs_frame.loc[
+            self.srs_frame["Team"] == away_team, "SRS_ST"
+        ].values[0]
+
+        # Calculate the predicted spreads
+        spread = float(home_srs - away_srs + self._hfa * (not is_neutral))
+        spread_o = float(home_srs_o - away_srs_d + self._hfa_o * (not is_neutral))
+        spread_d = float(home_srs_d - away_srs_o + self._hfa_d * (not is_neutral))
+        spread_st = float(home_srs_st - away_srs_st + self._hfa_st * (not is_neutral))
+
+        # Return a simple dictionary with the spreads
+        return {
+            "spread": spread,
+            "offensive": spread_o,
+            "defensive": spread_d,
+            "special": spread_st,
+        }
