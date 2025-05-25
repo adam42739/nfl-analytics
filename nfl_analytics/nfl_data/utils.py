@@ -17,7 +17,7 @@ class NflWeek:
         return f"NflWeek(year={self.season}, week={self.week})"
 
 
-def filter_data(
+def filter_data_weekly(
     df: pd.DataFrame,
     start_week: NflWeek = NflWeek(1900, 1),
     end_week: NflWeek = NflWeek(2100, 1),
@@ -55,6 +55,39 @@ def filter_data(
     start_mask = ~lower_edge_mask | (df[week_col] >= start_week.week)
     upper_edge_mask = df[season_col] == end_week.season
     end_mask = ~upper_edge_mask | (df[week_col] <= end_week.week)
+    df = df[start_mask & end_mask]
+
+    return df
+
+
+def filter_data_seasonaly(
+    df: pd.DataFrame,
+    start_season: int = 1900,
+    end_season: int = 2100,
+    season_col: str = "season",
+) -> pd.DataFrame:
+    """
+    Filter the DataFrame based on the given season range.
+
+    Parameters
+    ----------
+        df : pd.DataFrame
+            The DataFrame to filter.
+        start_season : int
+            The start season to filter from (inclusive). Leave blank for no lower bound.
+        end_season : int
+            The end season to filter to (inclusive). Leave blank for no upper bound.
+        season_col : str
+            The name of the column containing the season information. Default is "season".
+
+    Returns
+    -------
+        pd.DataFrame
+            The filtered DataFrame. Beware returned DataFrame is a slice.
+    """
+    # Filter the DataFrame by the given season
+    start_mask = df[season_col] >= start_season
+    end_mask = df[season_col] <= end_season
     df = df[start_mask & end_mask]
 
     return df

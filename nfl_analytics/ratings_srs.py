@@ -31,19 +31,12 @@ class RatingsSRS:
         Get the relevant computational data for the SRS.
         """
         # Get the schedules data and game IDs for this season up to the specified week
-        self._schedules = nfl_data.get_schedules()
-        self._schedules = nfl_data.filter_data(
-            self._schedules,
-            start_week=NflWeek(self.week.season, 1),
-            end_week=self.week,
-        )
-        self._game_ids = self._schedules["game_id"].unique()
+        self._schedules = nfl_data.schedules(NflWeek(self.week.season, 1), self.week)
 
         # Get the point breakdown data for each game up to the specified week
-        self._point_breakdown = nfl_data.get_point_breakdown(self.week.season)
-        self._point_breakdown = self._point_breakdown[
-            self._point_breakdown.index.isin(self._game_ids)
-        ]
+        self._point_breakdown = nfl_data.point_breakdown(
+            NflWeek(self.week.season, 1), self.week
+        )
 
         # Get a mask of games played at a neutral site, aligned with the point breakdown
         neutral_games = self._schedules.loc[
@@ -209,7 +202,7 @@ class RatingsSRS:
         Create the SRS DataFrame.
         """
         # Calculate the MoV and SoS for each team
-        mov = nfl_data.get_margin_of_victory(NflWeek(self.week.season, 1), self.week)
+        mov = nfl_data.margin_of_victory(NflWeek(self.week.season, 1), self.week)
         srs = self._x[:32] + self._x[32:64] + self._x[64:]
         sos = srs - mov["MoV"].to_numpy()
 
