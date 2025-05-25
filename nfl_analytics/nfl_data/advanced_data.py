@@ -3,7 +3,9 @@ from nfl_analytics.nfl_data import basic_data, utils
 from nfl_analytics.nfl_data.utils import NflWeek
 
 
-def point_breakdown(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
+def point_breakdown(
+    start_week: NflWeek, end_week: NflWeek, pbp_df: pd.DataFrame = None
+) -> pd.DataFrame:
     """
     Get the point breakdown for each game during the given weeks.
 
@@ -13,9 +15,14 @@ def point_breakdown(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
             The start week to filter from (inclusive).
         end_week : NflWeek
             The end week to filter to (inclusive).
+        pbp_df : pd.DataFrame, optional
+            A DataFrame containing the play-by-play data for the given seasons.
+            If not provided, it will be fetched.
+            Useful for reducing IO calls when the data is already readily available.
     """
-    # Get the play-by-play data for the given season
-    pbp_df = basic_data.pbp(start_week, end_week)
+    # Get the play-by-play data for the given weeks if necessary
+    if not isinstance(pbp_df, pd.DataFrame):
+        pbp_df = basic_data.pbp(start_week, end_week)
 
     # Get only scoring plays and relevant columns
     pbp_df = pbp_df[pbp_df["sp"].astype(bool)]
@@ -111,7 +118,9 @@ def point_breakdown(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
     return point_breakdown
 
 
-def margin_of_victory(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
+def margin_of_victory(
+    start_week: NflWeek, end_week: NflWeek, schedules: pd.DataFrame = None
+) -> pd.DataFrame:
     """
     Get the margin of victory (MoV) for each game in a given week.
 
@@ -119,12 +128,16 @@ def margin_of_victory(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
     ----------
         start_week : NflWeek
             The start week to filter from (inclusive).
-
         end_week : NflWeek
             The end week to filter to (inclusive).
+        schedules : pd.DataFrame, optional
+            A DataFrame containing the schedule data for the given seasons.
+            If not provided, it will be fetched.
+            Useful for reducing IO calls when the data is already readily available.
     """
-    # Get the schedule data for the given week
-    schedules = basic_data.schedules(start_week, end_week)
+    # Get the schedule data for the given weeks if necessary
+    if not isinstance(schedules, pd.DataFrame):
+        schedules = basic_data.schedules(start_week, end_week)
 
     # Get each team's total points scored
     points_home = schedules.groupby("home_team")["home_score"].agg(["sum", "count"])
