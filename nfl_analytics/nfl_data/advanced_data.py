@@ -119,7 +119,7 @@ def point_breakdown(
 
 
 def margin_of_victory(
-    start_week: NflWeek, end_week: NflWeek, schedules: pd.DataFrame = None
+    start_week: NflWeek, end_week: NflWeek, schedules_df: pd.DataFrame = None
 ) -> pd.DataFrame:
     """
     Get the margin of victory (MoV) for each game in a given week.
@@ -130,23 +130,23 @@ def margin_of_victory(
             The start week to filter from (inclusive).
         end_week : NflWeek
             The end week to filter to (inclusive).
-        schedules : pd.DataFrame, optional
+        schedules_df : pd.DataFrame, optional
             A DataFrame containing the schedule data for the given seasons.
             If not provided, it will be fetched.
             Useful for reducing IO calls when the data is already readily available.
     """
     # Get the schedule data for the given weeks if necessary
-    if not isinstance(schedules, pd.DataFrame):
-        schedules = basic_data.schedules(start_week, end_week)
+    if not isinstance(schedules_df, pd.DataFrame):
+        schedules_df = basic_data.schedules(start_week, end_week)
 
     # Get each team's total points scored
-    points_home = schedules.groupby("home_team")["home_score"].agg(["sum", "count"])
-    points_away = schedules.groupby("away_team")["away_score"].agg(["sum", "count"])
+    points_home = schedules_df.groupby("home_team")["home_score"].agg(["sum", "count"])
+    points_away = schedules_df.groupby("away_team")["away_score"].agg(["sum", "count"])
     points_scored = points_home.add(points_away, fill_value=0)
 
     # Get each team's total points allowed
-    points_home = schedules.groupby("home_team")["away_score"].agg(["sum", "count"])
-    points_away = schedules.groupby("away_team")["home_score"].agg(["sum", "count"])
+    points_home = schedules_df.groupby("home_team")["away_score"].agg(["sum", "count"])
+    points_away = schedules_df.groupby("away_team")["home_score"].agg(["sum", "count"])
     points_allowed = points_home.add(points_away, fill_value=0)
 
     # Calculate the MOV
