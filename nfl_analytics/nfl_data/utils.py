@@ -10,11 +10,77 @@ class NflWeek:
         self.season = season
         self.week = week
 
-    def __str__(self):
-        return f"{self.season} Week {self.week}"
+    def _update_const(self):
+        """
+        Update the instance constant variables.
+        """
+        self.season_start = NflWeek(self.season, 1)
 
-    def __repr__(self):
-        return f"NflWeek(year={self.season}, week={self.week})"
+    def _is_superbowl_week(self) -> bool:
+        """
+        Returns True if the week is the Super Bowl week, otherwise False.
+        """
+        if self.season >= 2021:
+            return self.week == 22
+        elif self.season >= 1994:
+            return self.week == 21
+        elif self.season >= 1993:
+            return self.week == 22
+        elif self.season >= 1990:
+            return self.week == 21
+        elif self.season >= 1978:
+            return self.week == 20
+        else:
+            return self.week == 17
+
+    def _advance_week(self):
+        """
+        Advance the week by one week.
+        """
+        if self._is_superbowl_week():
+            self.season += 1
+            self.week = 1
+        else:
+            self.week += 1
+
+        self._update_const()
+
+    def advance(self, weeks: int = 1):
+        """
+        Advance the week by a given number of weeks.
+        """
+        for _ in range(weeks):
+            self._advance_week()
+
+    def _go_back_week(self):
+        """
+        Back the week by one week.
+        """
+        if self.week == 1:
+            if self.season >= 2021:
+                self.week = 22
+            elif self.season >= 1994:
+                self.week = 21
+            elif self.season >= 1993:
+                self.week = 22
+            elif self.season >= 1990:
+                self.week = 21
+            elif self.season >= 1978:
+                self.week = 20
+            else:
+                self.week = 17
+            self.season -= 1
+        else:
+            self.week -= 1
+
+        self._update_const()
+
+    def go_back(self, weeks: int = 1):
+        """
+        Back the week by a given number of weeks.
+        """
+        for _ in range(weeks):
+            self._go_back_week()
 
 
 def filter_data_weekly(

@@ -3,7 +3,7 @@ from nfl_analytics.nfl_data import utils
 from nfl_analytics.nfl_data.utils import NflWeek
 
 
-def test_filter_data():
+def test_filter_data_weekly():
     # Create a sample DataFrame
     data = {
         "season": [2022, 2023, 2023, 2024],
@@ -17,7 +17,7 @@ def test_filter_data():
     end_week = NflWeek(2023, 3)
 
     # Filter the DataFrame: start_week to end_week
-    filtered_df = utils.filter_data(
+    filtered_df = utils.filter_data_weekly(
         df, start_week=start_week, end_week=end_week
     ).reset_index(drop=True)
 
@@ -32,7 +32,7 @@ def test_filter_data():
     assert filtered_df.equals(expected_df)
 
     # Filter the DataFrame: up to end_week
-    filtered_df = utils.filter_data(df, end_week=end_week).reset_index(drop=True)
+    filtered_df = utils.filter_data_weekly(df, end_week=end_week).reset_index(drop=True)
 
     # Check the result
     expected_data = {
@@ -45,7 +45,7 @@ def test_filter_data():
     assert filtered_df.equals(expected_df)
 
     # Filter the DataFrame: start_week onwards
-    filtered_df = utils.filter_data(df, start_week=start_week).reset_index(
+    filtered_df = utils.filter_data_weekly(df, start_week=start_week).reset_index(
         drop=True
     )
 
@@ -59,3 +59,31 @@ def test_filter_data():
 
     assert filtered_df.equals(expected_df)
 
+
+def test_filter_data_seasonaly():
+    # Create a sample DataFrame
+    data = {
+        "season": [2022, 2023, 2023, 2024],
+        "week": [1, 2, 3, 1],
+        "team": ["Team A", "Team B", "Team C", "Team D"],
+    }
+    df = pd.DataFrame(data)
+
+    # Define the start and end seasons
+    start_season = 2023
+    end_season = 2023
+
+    # Filter the DataFrame: start_season to end_season
+    filtered_df = utils.filter_data_seasonaly(
+        df, start_season=start_season, end_season=end_season
+    ).reset_index(drop=True)
+
+    # Check the result
+    expected_data = {
+        "season": [2023, 2023],
+        "week": [2, 3],
+        "team": ["Team B", "Team C"],
+    }
+    expected_df = pd.DataFrame(expected_data)
+
+    assert filtered_df.equals(expected_df)
