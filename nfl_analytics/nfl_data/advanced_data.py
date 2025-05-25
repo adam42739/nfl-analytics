@@ -1,25 +1,21 @@
 import pandas as pd
-from nfl_analytics.nfl_data import sourcing, utils
+from nfl_analytics.nfl_data import basic_data, utils
 from nfl_analytics.nfl_data.utils import NflWeek
 
 
-def get_point_breakdown(season: int) -> pd.DataFrame:
+def point_breakdown(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
     """
-    Get the point breakdown (offensive vs. special teams points) for each game.
-    Scoring breakdown is sourced from the play-by-play data.
+    Get the point breakdown for each game during the given weeks.
 
     Parameters
     ----------
-        season : int
-            The NFL season year.
-
-    Returns
-    -------
-        pd.DataFrame
-            The point breakdown for each play.
+        start_week : NflWeek
+            The start week to filter from (inclusive).
+        end_week : NflWeek
+            The end week to filter to (inclusive).
     """
     # Get the play-by-play data for the given season
-    pbp_df = sourcing.get_pbp(season)
+    pbp_df = basic_data.pbp(start_week, end_week)
 
     # Get only scoring plays and relevant columns
     pbp_df = pbp_df[pbp_df["sp"].astype(bool)]
@@ -115,7 +111,7 @@ def get_point_breakdown(season: int) -> pd.DataFrame:
     return point_breakdown
 
 
-def get_margin_of_victory(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
+def margin_of_victory(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
     """
     Get the margin of victory (MoV) for each game in a given week.
 
@@ -126,19 +122,9 @@ def get_margin_of_victory(start_week: NflWeek, end_week: NflWeek) -> pd.DataFram
 
         end_week : NflWeek
             The end week to filter to (inclusive).
-
-    Returns
-    -------
-        pd.DataFrame
-            The MoV by team.
     """
     # Get the schedule data for the given week
-    schedules = sourcing.get_schedules()
-    schedules = utils.filter_data(
-        schedules,
-        start_week=start_week,
-        end_week=end_week,
-    )
+    schedules = basic_data.schedules(start_week, end_week)
 
     # Get each team's total points scored
     points_home = schedules.groupby("home_team")["home_score"].agg(["sum", "count"])

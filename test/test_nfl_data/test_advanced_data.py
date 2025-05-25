@@ -1,11 +1,13 @@
-from nfl_analytics.nfl_data import transform
+from nfl_analytics.nfl_data import advanced_data
 from nfl_analytics.nfl_data import NflWeek
 import pandas as pd
 
 
 def test_get_point_breakdown():
     # Calculate the point breakdown
-    point_breakdown = transform.get_point_breakdown(2024).reset_index()
+    point_breakdown = advanced_data.point_breakdown(
+        NflWeek(2024, 1), NflWeek(2024, 1)
+    ).reset_index()
 
     # THe expected result
     expected_df = pd.DataFrame(
@@ -133,7 +135,7 @@ def test_get_point_breakdown():
 
 def test_get_margin_of_victory():
     # Calculate the MOV
-    mov = transform.get_margin_of_victory(NflWeek(2024, 1), NflWeek(2024, 1))
+    mov = advanced_data.margin_of_victory(NflWeek(2024, 1), NflWeek(2024, 1))
 
     # The expected result
     expected_df = pd.DataFrame(
