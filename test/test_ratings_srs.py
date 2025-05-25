@@ -1,11 +1,11 @@
-from nfl_analytics import ratings_srs
+from nfl_analytics import srs_model
 from nfl_analytics.nfl_data import NflWeek
 import pandas as pd
 
 
 def test_ratings_srs():
     # Get the SRS breakdown for the end of the 2024 season
-    srs_model = ratings_srs.RatingsSRS(NflWeek(2024, 18))
+    srs_model = srs_model.RatingsSRS(NflWeek(2024, 18))
     srs_model.fit()
     srs2024 = (
         srs_model.srs_frame.sort_values(by="SRS", ascending=False)
