@@ -7,7 +7,7 @@ from nfl_analytics.nfl_data import basic_data
 
 def run_data_fetch_test(
     data_fetcher: Callable[[], pd.DataFrame],
-    expected_columns: list[str],
+    expected_head: pd.DataFrame,
     file_path: str,
     **fetcher_args,
 ):
@@ -34,11 +34,10 @@ def run_data_fetch_test(
             _local_storage.set_datastore_path(tempdir)
 
             # Fetch the data
-            df = data_fetcher(**fetcher_args)
+            df = data_fetcher(**fetcher_args).iloc[:5, :5].reset_index(drop=True)
 
-            # Check that the DataFrame has the expected columns
-            for col in expected_columns:
-                assert col in df.columns
+            # Check that the DataFrames are equal
+            assert df.equals(expected_head)
 
             # Check that the file exists in the datastore
             assert _local_storage.file_exists("nfl_data/", file_path)
@@ -48,16 +47,46 @@ def run_data_fetch_test(
 
 
 def test_schedules():
-    # Define the expected columns
-    expected_columns = [
-        "game_id",
-        "season",
-        "week",
-        "home_team",
-        "away_team",
-        "home_score",
-        "away_score",
-    ]
+    # Define the expected head (.iloc[:5,:5] of the DataFrame)
+    expected_head = pd.DataFrame(
+        [
+            {
+                "game_id": "2023_01_DET_KC",
+                "season": 2023,
+                "game_type": "REG",
+                "week": 1,
+                "gameday": "2023-09-07",
+            },
+            {
+                "game_id": "2023_01_CAR_ATL",
+                "season": 2023,
+                "game_type": "REG",
+                "week": 1,
+                "gameday": "2023-09-10",
+            },
+            {
+                "game_id": "2023_01_HOU_BAL",
+                "season": 2023,
+                "game_type": "REG",
+                "week": 1,
+                "gameday": "2023-09-10",
+            },
+            {
+                "game_id": "2023_01_CIN_CLE",
+                "season": 2023,
+                "game_type": "REG",
+                "week": 1,
+                "gameday": "2023-09-10",
+            },
+            {
+                "game_id": "2023_01_JAX_IND",
+                "season": 2023,
+                "game_type": "REG",
+                "week": 1,
+                "gameday": "2023-09-10",
+            },
+        ]
+    )
 
     # Define the file path
     file_path = f"schedules.parquet"
@@ -65,7 +94,7 @@ def test_schedules():
     # Run the data fetch test
     run_data_fetch_test(
         basic_data.schedules,
-        expected_columns,
+        expected_head,
         file_path,
         start_week=basic_data.NflWeek(2023, 1),
         end_week=basic_data.NflWeek(2023, 18),
@@ -73,17 +102,46 @@ def test_schedules():
 
 
 def test_play_by_play():
-    # Define the expected columns
-    expected_columns = [
-        "game_id",
-        "play_id",
-        "season",
-        "week",
-        "home_team",
-        "away_team",
-        "posteam",
-        "defteam",
-    ]
+    # Define the expected head (.iloc[:5,:5] of the DataFrame)
+    expected_head = pd.DataFrame(
+        [
+            {
+                "play_id": 1.0,
+                "game_id": "2023_01_ARI_WAS",
+                "old_game_id": "2023091007",
+                "home_team": "WAS",
+                "away_team": "ARI",
+            },
+            {
+                "play_id": 39.0,
+                "game_id": "2023_01_ARI_WAS",
+                "old_game_id": "2023091007",
+                "home_team": "WAS",
+                "away_team": "ARI",
+            },
+            {
+                "play_id": 55.0,
+                "game_id": "2023_01_ARI_WAS",
+                "old_game_id": "2023091007",
+                "home_team": "WAS",
+                "away_team": "ARI",
+            },
+            {
+                "play_id": 77.0,
+                "game_id": "2023_01_ARI_WAS",
+                "old_game_id": "2023091007",
+                "home_team": "WAS",
+                "away_team": "ARI",
+            },
+            {
+                "play_id": 102.0,
+                "game_id": "2023_01_ARI_WAS",
+                "old_game_id": "2023091007",
+                "home_team": "WAS",
+                "away_team": "ARI",
+            },
+        ]
+    )
 
     # Define the file path
     file_path = f"pbp-year=2023.parquet"
@@ -91,7 +149,7 @@ def test_play_by_play():
     # Run the data fetch test
     run_data_fetch_test(
         basic_data.play_by_play,
-        expected_columns,
+        expected_head,
         file_path,
         start_week=basic_data.NflWeek(2023, 1),
         end_week=basic_data.NflWeek(2023, 18),
