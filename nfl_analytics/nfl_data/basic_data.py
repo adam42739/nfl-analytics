@@ -24,7 +24,7 @@ def schedules(
     return df
 
 
-def pbp(
+def play_by_play(
     start_week: NflWeek, end_week: NflWeek, force_refresh: bool = False
 ) -> pd.DataFrame:
     """

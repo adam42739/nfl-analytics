@@ -101,7 +101,7 @@ def test_schedules():
     )
 
 
-def test_pbp():
+def test_play_by_play():
     # Define the expected head (.iloc[:5,:5] of the DataFrame)
     expected_head = pd.DataFrame(
         [
@@ -148,7 +148,7 @@ def test_pbp():
 
     # Run the data fetch test
     run_data_fetch_test(
-        basic_data.pbp,
+        basic_data.play_by_play,
         expected_head,
         file_path,
         start_week=basic_data.NflWeek(2023, 1),
