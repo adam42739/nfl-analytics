@@ -7,6 +7,8 @@ from nfl_analytics.nfl_data.basic_data import (
 from nfl_analytics.nfl_data.advanced_data import (
     point_breakdown,
     margin_of_victory,
+    hfa,
+    srs,
 )
 
 
