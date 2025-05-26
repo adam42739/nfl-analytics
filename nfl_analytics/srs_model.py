@@ -218,13 +218,37 @@ class _SrsFitter:
 
 
 class _SrsPredictor:
-    def __init__(self, srs_frame: pd.DataFrame):
-        self.srs_frame = srs_frame
+    def __init__(self, fitter: _SrsFitter):
+        self._srs_frame = fitter.srs_frame
+        self._hfa = fitter._hfa
+        self._hfa_o = fitter._hfa_o
+        self._hfa_d = fitter._hfa_d
+        self._hfa_st = fitter._hfa_st
 
     def predict(self, games: pd.DataFrame) -> pd.DataFrame:
+        """
+        Predict the spreads for a given schedule.
+
+        Parameters
+        ----------
+        games : pd.DataFrame
+            A DataFrame containing the game schedule with columns:
+            - 'game_id': Unique identifier for the game
+            - 'home_team': Abbreviation of the home team
+            - 'away_team': Abbreviation of the away team
+            - 'is_neutral': Boolean indicating if the game is played at a neutral site
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the predicted spreads for each game in the schedule.
+        """
         self._games = games.copy()
 
         self._merge_srs_data()
+        self._predict_spreads()
+
+        return self._games
 
     def _merge_srs_data(self):
         """
@@ -233,7 +257,7 @@ class _SrsPredictor:
         # Merge home team SRS data
         self._games = pd.merge(
             self._games,
-            self.srs_frame[["Team", "SRS", "SRS_O", "SRS_D", "SRS_ST"]].rename(
+            self._srs_frame[["Team", "SRS", "SRS_O", "SRS_D", "SRS_ST"]].rename(
                 {
                     "SRS": "SRS_home",
                     "SRS_O": "SRS_O_home",
@@ -250,7 +274,7 @@ class _SrsPredictor:
         # Merge away team SRS data
         self._games = pd.merge(
             self._games,
-            self.srs_frame[["Team", "SRS", "SRS_O", "SRS_D", "SRS_ST"]].rename(
+            self._srs_frame[["Team", "SRS", "SRS_O", "SRS_D", "SRS_ST"]].rename(
                 {
                     "SRS": "SRS_away",
                     "SRS_O": "SRS_O_away",
@@ -265,6 +289,9 @@ class _SrsPredictor:
         ).drop(columns=["Team"])
 
     def _predict_spreads(self):
+        """
+        Predict the game spreads based on the SRS values and home field advantage.
+        """
         # Overal game spreads
         self._games["pred_spread"] = (
             self._games["SRS_home"]
