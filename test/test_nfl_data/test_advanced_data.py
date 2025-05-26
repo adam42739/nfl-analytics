@@ -178,8 +178,8 @@ def test_get_margin_of_victory():
     assert mov.equals(expected_df)
 
 
-def test_hfa():
-    hfa, hfa_o, hfa_d, hfa_st = advanced_data.hfa(NflWeek(2024, 1), NflWeek(2024, 18))
+def test_home_field_advantage():
+    hfa, hfa_o, hfa_d, hfa_st = advanced_data.home_field_advantage(NflWeek(2024, 1), NflWeek(2024, 18))
 
     assert hfa == 1.7191011235955065
     assert hfa_o == 1.295880149812735
@@ -187,10 +187,10 @@ def test_hfa():
     assert hfa_st == 0.37827715355805225
 
 
-def test_srs():
+def test_simple_rating_system():
     # Get the SRS breakdown for the end of the 2024 season
     srs_frame = (
-        advanced_data.srs(NflWeek(2024, 1), NflWeek(2024, 18))
+        advanced_data.simple_rating_system(NflWeek(2024, 1), NflWeek(2024, 18))
         .sort_values(by="SRS", ascending=False)
         .round(1)
         .reset_index(drop=True)

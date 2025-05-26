@@ -1,5 +1,5 @@
 import pandas as pd
-from nfl_analytics.nfl_data import basic_data, utils
+from nfl_analytics.nfl_data import basic_data
 from nfl_analytics.nfl_data.utils import NflWeek
 import numpy as np
 
@@ -23,7 +23,7 @@ def point_breakdown(
     """
     # Get the play-by-play data for the given weeks if necessary
     if not isinstance(pbp_df, pd.DataFrame):
-        pbp_df = basic_data.pbp(start_week, end_week)
+        pbp_df = basic_data.play_by_play(start_week, end_week)
 
     # Get only scoring plays and relevant columns
     pbp_df = pbp_df[pbp_df["sp"].astype(bool)]
@@ -160,7 +160,7 @@ def margin_of_victory(
     return mov
 
 
-def hfa(
+def home_field_advantage(
     start_week: NflWeek,
     end_week: NflWeek,
     schedules_df: pd.DataFrame = None,
@@ -248,7 +248,7 @@ class _SrsFitter:
         """
         self._schedules_df = basic_data.schedules(self.start_week, self.end_week)
         self._point_breakdown_df = point_breakdown(self.start_week, self.end_week)
-        self._hfa, self._hfa_o, self._hfa_d, self._hfa_st = hfa(
+        self._hfa, self._hfa_o, self._hfa_d, self._hfa_st = home_field_advantage(
             self.start_week, self.end_week, self._schedules_df, self._point_breakdown_df
         )
 
@@ -423,7 +423,7 @@ class _SrsFitter:
         )
 
 
-def srs(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
+def simple_rating_system(start_week: NflWeek, end_week: NflWeek) -> pd.DataFrame:
     """
     Get the Simple Rating System (SRS) for each team in a given week.
 

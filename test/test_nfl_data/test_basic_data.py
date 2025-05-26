@@ -72,7 +72,7 @@ def test_schedules():
     )
 
 
-def test_pbp():
+def test_play_by_play():
     # Define the expected columns
     expected_columns = [
         "game_id",
@@ -90,7 +90,7 @@ def test_pbp():
 
     # Run the data fetch test
     run_data_fetch_test(
-        basic_data.pbp,
+        basic_data.play_by_play,
         expected_columns,
         file_path,
         start_week=basic_data.NflWeek(2023, 1),

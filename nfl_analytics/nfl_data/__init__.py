@@ -1,14 +1,14 @@
 from nfl_analytics.nfl_data.basic_data import (
     schedules,
-    pbp,
+    play_by_play,
 )
 
 
 from nfl_analytics.nfl_data.advanced_data import (
     point_breakdown,
     margin_of_victory,
-    hfa,
-    srs,
+    home_field_advantage,
+    simple_rating_system,
 )
 
 
