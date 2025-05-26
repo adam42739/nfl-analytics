@@ -7,11 +7,18 @@ def test_datastore_file_setting():
 
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Set the temporary directory as the datastore path
-        set_datastore_path(temp_dir)
+        # Get the current datastore path
+        current_path = _get_datastore_path()
 
-        # Check if the path is set correctly
-        assert _get_datastore_path() == temp_dir
+        try:
+            # Set the temporary directory as the datastore path
+            set_datastore_path(temp_dir)
+
+            # Check if the path is set correctly
+            assert _get_datastore_path() == temp_dir
+        finally:
+            # Reset the datastore path to the original path
+            set_datastore_path(current_path)  
 
 
 def test_create_subdir():
@@ -19,21 +26,28 @@ def test_create_subdir():
     Test the creation of a subdirectory in the datastore path.
     """
     import os
-    from nfl_analytics._local_storage import set_datastore_path, _create_subdir
+    from nfl_analytics._local_storage import set_datastore_path, _create_subdir, _get_datastore_path
     import tempfile
 
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Set the temporary directory as the datastore path
-        set_datastore_path(temp_dir)
+        # Get the current datastore path
+        current_path = _get_datastore_path()
 
-        # Create a subdirectory
-        subdir_name = "test_subdir1/test_subdir2/"
-        _create_subdir(subdir_name)
+        try:
+            # Set the temporary directory as the datastore path
+            set_datastore_path(temp_dir)
 
-        # Check if the subdirectory is created
-        subdir_path = os.path.join(temp_dir, subdir_name)
-        assert os.path.exists(subdir_path)
+            # Create a subdirectory
+            subdir_name = "test_subdir1/test_subdir2/"
+            _create_subdir(subdir_name)
+
+            # Check if the subdirectory is created
+            subdir_path = os.path.join(temp_dir, subdir_name)
+            assert os.path.exists(subdir_path)
+        finally:
+            # Reset the datastore path to the original path
+            set_datastore_path(current_path)
 
 
 def test_frame_io():
@@ -41,31 +55,44 @@ def test_frame_io():
     Test the dumping and loading of a DataFrame to/from the datastore.
     """
     import pandas as pd
-    from nfl_analytics._local_storage import set_datastore_path, dump_frame, load_frame, file_exists
+    from nfl_analytics._local_storage import (
+        set_datastore_path,
+        dump_frame,
+        load_frame,
+        file_exists,
+        _get_datastore_path,
+    )
     import tempfile
 
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Set the temporary directory as the datastore path
-        set_datastore_path(temp_dir)
+        # Get the current datastore path
+        current_path = _get_datastore_path()
 
-        # Create a sample DataFrame
-        df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
+        try:
+            # Set the temporary directory as the datastore path
+            set_datastore_path(temp_dir)
 
-        subdir_name = "test_subdir1/test_subdir2/"
-        filename = "test_frame.csv"
+            # Create a sample DataFrame
+            df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
 
-        # Make sure the file does not exist before dumping
-        assert not file_exists(subdir_name, filename)
+            subdir_name = "test_subdir1/test_subdir2/"
+            filename = "test_frame.csv"
 
-        # Dump the DataFrame to the datastore
-        dump_frame(df, subdir_name, filename)
+            # Make sure the file does not exist before dumping
+            assert not file_exists(subdir_name, filename)
 
-        # Make sure the file exists after dumping
-        assert file_exists(subdir_name, filename)
+            # Dump the DataFrame to the datastore
+            dump_frame(df, subdir_name, filename)
 
-        # Load the DataFrame from the datastore
-        loaded_df = load_frame(subdir_name, filename)
+            # Make sure the file exists after dumping
+            assert file_exists(subdir_name, filename)
 
-        # Check if the loaded DataFrame is equal to the original DataFrame
-        assert df.equals(loaded_df)
+            # Load the DataFrame from the datastore
+            loaded_df = load_frame(subdir_name, filename)
+
+            # Check if the loaded DataFrame is equal to the original DataFrame
+            assert df.equals(loaded_df)
+        finally:
+            # Reset the datastore path to the original path
+            set_datastore_path(current_path)
