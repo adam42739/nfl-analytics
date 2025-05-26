@@ -308,3 +308,103 @@ def test_srs_fitter():
     )
 
     assert srs_frame.equals(exepcted_srs)
+
+
+def test_srs_predictor():
+    # Get the SRS breakdown for the end of the 2024 season
+    fitter = srs_model._SrsFitter(NflWeek(2023, 1), NflWeek(2023, 18))
+    fitter.fit()
+    predictor = srs_model._SrsPredictor(fitter)
+
+    # Create a sample DataFrame to predict SRS
+    games = pd.DataFrame(
+        [
+            {
+                "game_id": "2023_01_DET_KC",
+                "home_team": "KC",
+                "away_team": "DET",
+                "is_neutral": False,
+            },
+            {
+                "game_id": "2023_01_CAR_ATL",
+                "home_team": "ATL",
+                "away_team": "CAR",
+                "is_neutral": False,
+            },
+            {
+                "game_id": "2023_01_HOU_BAL",
+                "home_team": "BAL",
+                "away_team": "HOU",
+                "is_neutral": False,
+            },
+            {
+                "game_id": "2023_01_CIN_CLE",
+                "home_team": "CLE",
+                "away_team": "CIN",
+                "is_neutral": False,
+            },
+            {
+                "game_id": "2023_01_JAX_IND",
+                "home_team": "IND",
+                "away_team": "JAX",
+                "is_neutral": False,
+            },
+        ]
+    )
+
+    # Predict SRS values
+    predicted_games = predictor.predict(games)
+
+    # The expected games result
+    expected_games = pd.DataFrame(
+        [
+            {
+                "game_id": "2023_01_DET_KC",
+                "home_team": "KC",
+                "away_team": "DET",
+                "pred_spread": 2.3860685731694486,
+                "pred_spread_O": -6.343678437805178,
+                "pred_spread_D": 5.1536307129700125,
+                "pred_spread_ST": 3.576116298004613,
+            },
+            {
+                "game_id": "2023_01_CAR_ATL",
+                "home_team": "ATL",
+                "away_team": "CAR",
+                "pred_spread": 7.4724593303074265,
+                "pred_spread_O": 6.903121586208166,
+                "pred_spread_D": 0.9321619763194577,
+                "pred_spread_ST": -0.3628242322201971,
+            },
+            {
+                "game_id": "2023_01_HOU_BAL",
+                "home_team": "BAL",
+                "away_team": "HOU",
+                "pred_spread": 15.302268090183997,
+                "pred_spread_O": 7.522905221744963,
+                "pred_spread_D": 6.454350450500083,
+                "pred_spread_ST": 1.3250124179389524,
+            },
+            {
+                "game_id": "2023_01_CIN_CLE",
+                "home_team": "CLE",
+                "away_team": "CIN",
+                "pred_spread": 4.315206827677684,
+                "pred_spread_O": 0.9668275753820668,
+                "pred_spread_D": 0.754832064891678,
+                "pred_spread_ST": 2.593547187403938,
+            },
+            {
+                "game_id": "2023_01_JAX_IND",
+                "home_team": "IND",
+                "away_team": "JAX",
+                "pred_spread": -0.21316520048219978,
+                "pred_spread_O": 1.265277909160397,
+                "pred_spread_D": -0.5190956218394549,
+                "pred_spread_ST": -0.959347487803142,
+            },
+        ]
+    )
+
+    # Check if the predicted games match the expected games
+    assert predicted_games.equals(expected_games)
