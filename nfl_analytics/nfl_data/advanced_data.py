@@ -157,3 +157,62 @@ def margin_of_victory(
     mov = mov.sort_values(by="Team")
 
     return mov
+
+
+def hfa(
+    start_week: NflWeek,
+    end_week: NflWeek,
+    schedules_df: pd.DataFrame = None,
+    point_breakdown_df: pd.DataFrame = None,
+) -> tuple[float, float, float, float]:
+    """
+    Get the home field advantage (HFA) for each team in a given week.
+
+    Parameters
+    ----------
+        start_week : NflWeek
+            The start week to filter from (inclusive).
+        end_week : NflWeek
+            The end week to filter to (inclusive).
+        point_breakdown_df : pd.DataFrame, optional
+            A DataFrame containing the point breakdown data for the given seasons.
+            If not provided, it will be fetched.
+            Useful for reducing IO calls when the data is already readily available.
+
+    Returns
+    -------
+        hfa, hfa_o, hfa_d, hfa_st : tuple[float, float, float, float]
+    """
+    # Get the schedule data for the given weeks if necessary
+    if not isinstance(schedules_df, pd.DataFrame):
+        schedules_df = basic_data.schedules(start_week, end_week)
+
+    # Get the point breakdown data for the given weeks if necessary
+    if not isinstance(point_breakdown_df, pd.DataFrame):
+        point_breakdown_df = point_breakdown(start_week, end_week)
+
+    # Create a mask for neutral site games
+    neutral_game_ids = schedules_df.loc[
+        schedules_df["location"] == "Neutral", "game_id"
+    ]
+    neutral_mask = point_breakdown_df.index.isin(neutral_game_ids)
+
+    # Offensive HFA
+    home_points = point_breakdown_df.loc[~neutral_mask, "home_offensive_points"]
+    away_points = point_breakdown_df.loc[~neutral_mask, "away_offensive_points"]
+    hfa_o = float(home_points.mean() - away_points.mean())
+
+    # Defensive HFA
+    home_points = point_breakdown_df.loc[~neutral_mask, "home_defensive_points"]
+    away_points = point_breakdown_df.loc[~neutral_mask, "away_defensive_points"]
+    hfa_d = float(home_points.mean() - away_points.mean())
+
+    # Special Teams HFA
+    home_points = point_breakdown_df.loc[~neutral_mask, "home_special_teams_points"]
+    away_points = point_breakdown_df.loc[~neutral_mask, "away_special_teams_points"]
+    hfa_st = float(home_points.mean() - away_points.mean())
+
+    # Calculate the overall HFA
+    hfa = hfa_o + hfa_d + hfa_st
+
+    return hfa, hfa_o, hfa_d, hfa_st
