@@ -334,3 +334,41 @@ class _SrsPredictor:
                 "SRS_ST_away",
             ]
         )
+
+
+class SrsModel:
+    def __init__(self, start_week: NflWeek, end_week: NflWeek):
+        """
+        Initialize the SRS model with the start and end weeks.
+
+        Parameters
+        ----------
+            start_week : NflWeek
+                The start week of the season (inclusive).
+            end_week : NflWeek
+                The end week of the season (inclusive).
+        """
+        self._fitter = _SrsFitter(start_week, end_week)
+        self._fitter.fit()
+
+        self._predictor = _SrsPredictor(self._fitter)
+
+    def predict(self, games: pd.DataFrame) -> pd.DataFrame:
+        """
+        Predict the spreads for a given schedule.
+
+        Parameters
+        ----------
+        games : pd.DataFrame
+            A DataFrame containing the game schedule with columns:
+            - 'game_id': Unique identifier for the game
+            - 'home_team': Abbreviation of the home team
+            - 'away_team': Abbreviation of the away team
+            - 'is_neutral': Boolean indicating if the game is played at a neutral site
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the predicted spreads for each game in the schedule.
+        """
+        return self._predictor.predict(games)
