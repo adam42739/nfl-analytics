@@ -176,3 +176,12 @@ def test_get_margin_of_victory():
     )
 
     assert mov.equals(expected_df)
+
+
+def test_hfa():
+    hfa, hfa_o, hfa_d, hfa_st = advanced_data.hfa(NflWeek(2024, 1), NflWeek(2024, 18))
+
+    assert hfa == 1.7191011235955065
+    assert hfa_o == 1.295880149812735
+    assert hfa_d == 0.0449438202247191
+    assert hfa_st == 0.37827715355805225
